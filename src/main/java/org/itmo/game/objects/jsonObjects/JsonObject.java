@@ -17,6 +17,6 @@ public class JsonObject {
     private int height;
     
     public TerminalRectangle terminalRectanglePosition() {
-        return new TerminalRectangle(x, y, width, height);
+        return new TerminalRectangle(x * 2, y * 2, width * 2, height * 2);
     }
 }

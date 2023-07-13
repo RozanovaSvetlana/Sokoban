@@ -15,11 +15,11 @@ public class MapTests {
     @Test
     public void buildFromJsonTest() {
         Map map = getMapFromJson();
-        assertEquals(7, map.getWidth());
-        assertEquals(5, map.getHeight());
+        assertEquals(14, map.getWidth());
+        assertEquals(10, map.getHeight());
         assertEquals(2, map.getBoxes().size());
         assertEquals(6, map.getWalls().size());
-        assertEquals(new TerminalRectangle(3, 2, 1, 1),
+        assertEquals(new TerminalRectangle(6, 4, 2, 2),
             map.getPlayer().getPosition());
     }
     

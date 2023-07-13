@@ -39,8 +39,8 @@ public class Map {
     }
     
     private void fromJsonMapToMap(JsonMap jsonMap) {
-        width = jsonMap.getWidth();
-        height = jsonMap.getHeight();
+        width = jsonMap.getWidth() * 2;
+        height = jsonMap.getHeight() * 2;
         jsonMap.getWalls().stream().map((x) -> new Wall(x.terminalRectanglePosition()))
             .forEach(walls::add);
         jsonMap.getBoxes().stream().map((x) -> new Box(x.terminalRectanglePosition()))
@@ -56,8 +56,8 @@ public class Map {
     
     private JsonMap fromMapToJsonMap() {
         JsonMap jsonMap = new JsonMap();
-        jsonMap.setWidth(width);
-        jsonMap.setHeight(height);
+        jsonMap.setWidth(width / 2);
+        jsonMap.setHeight(height / 2);
         jsonMap.setEndpoints(gameObjectListToJsonObjectList(endpoints));
         jsonMap.setBoxes(gameObjectListToJsonObjectList(boxes));
         jsonMap.setWalls(gameObjectListToJsonObjectList(walls));
@@ -71,7 +71,8 @@ public class Map {
     
     private JsonObject gameObjectToJsonObject(GameObject object) {
         TerminalRectangle position = object.getPosition();
-        return new JsonObject(position.x, position.y, position.width, position.height);
+        return new JsonObject(position.x / 2, position.y / 2, position.width / 2,
+            position.height / 2);
     }
     
     public static class MapBuilder {
