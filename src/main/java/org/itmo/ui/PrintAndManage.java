@@ -1,5 +1,7 @@
 package org.itmo.ui;
 
+import static org.itmo.game.Symbols.SPACE;
+
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.graphics.TextGraphics;
@@ -63,6 +65,18 @@ public class PrintAndManage {
     
     public void closeTerminal() throws IOException {
         terminal.close();
+    }
+    
+    /**
+     * Replaces the characters printed in the range with the SPACE character set in the system
+     * @param columnStart - wipe start column
+     * @param rowStart - wipe start row
+     * @param columnEnd - wipe end column
+     * @param rowEnd - - wipe start row
+     */
+    public void wipeOut(int columnStart, int rowStart, int columnEnd, int rowEnd) {
+        textGraphics.drawLine(new TerminalPosition(columnStart, rowStart),
+            new TerminalPosition(columnEnd, rowEnd), SPACE);
     }
     
 }

@@ -2,20 +2,20 @@ package org.itmo.game;
 
 import com.googlecode.lanterna.input.KeyStroke;
 import java.io.IOException;
-import org.itmo.ui.windows.GameWindow;
-import org.itmo.ui.windows.LogoWindow;
+import org.itmo.game.logic.Game;
 
 /**
  * A class that responds to the user's click in an appropriate way
  */
 public class Controller {
     
-    public void play() throws IOException, InterruptedException {
+    private static final Game gameLogic = new Game();
+    
+    public void play() throws IOException {
         if(startGame()) {
-            GameWindow gameWindow = new GameWindow();
-            gameWindow.clearScreen();
+            gameLogic.toGameWindow();
             while (true) {
-                KeyStroke input = gameWindow.getKeyPressed();
+                KeyStroke input = gameLogic.getKeyPressed();
                 if(input != null) {
                     switch (input.getKeyType()) {
                         case ArrowUp -> {
@@ -31,7 +31,7 @@ public class Controller {
                         
                         }
                         case Escape -> {
-                            gameWindow.closeTerminal();
+                            gameLogic.closeWindow();
                             return;
                         }
                         case Character -> {
@@ -44,18 +44,16 @@ public class Controller {
     }
     
     private boolean startGame() throws IOException {
-        LogoWindow logo = new LogoWindow();
-        logo.clearScreen();
-        logo.play();
+        gameLogic.toLogoWindow();
         while (true) {
-            KeyStroke input = logo.getKeyPressed();
+            KeyStroke input = gameLogic.getKeyPressed();
             switch (input.getKeyType()) {
                 case Enter -> {
-                    logo.closeTerminal();
+                    gameLogic.closeWindow();
                     return true;
                 }
                 case Escape -> {
-                    logo.closeTerminal();
+                    gameLogic.closeWindow();
                     return false;
                 }
             }
