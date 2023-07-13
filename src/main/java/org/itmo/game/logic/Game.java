@@ -11,6 +11,7 @@ public class Game {
     
     Map map;
     int numberOccupiedEndpoints = 0;
+    int numberStep = 0;
     WindowImpl currentWindow;
     
     public void toLogoWindow() throws IOException {
@@ -22,6 +23,7 @@ public class Game {
     public void toGameWindow() throws IOException {
         currentWindow = new GameWindow();
         currentWindow.clearScreen();
+        currentWindow.play();
     }
     
     public KeyStroke getKeyPressed() throws IOException {
