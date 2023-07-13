@@ -1,4 +1,4 @@
-package org.itmo.ui;
+package org.itmo.ui.windows;
 
 import org.itmo.game.map.Map;
 

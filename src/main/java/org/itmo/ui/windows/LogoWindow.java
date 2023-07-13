@@ -1,6 +1,6 @@
-package org.itmo.ui;
+package org.itmo.ui.windows;
 
-import static org.itmo.constants.Symbols.SPACE;
+import static org.itmo.game.Symbols.SPACE;
 
 import com.googlecode.lanterna.TerminalPosition;
 import java.io.BufferedReader;

@@ -1,7 +1,7 @@
 package org.itmo.game.objects;
 
-import static org.itmo.constants.Symbols.GREEN_BOX;
-import static org.itmo.constants.Symbols.RED_BOX;
+import static org.itmo.game.Symbols.GREEN_BOX;
+import static org.itmo.game.Symbols.RED_BOX;
 
 import com.googlecode.lanterna.TerminalRectangle;
 

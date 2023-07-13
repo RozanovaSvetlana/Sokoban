@@ -1,4 +1,4 @@
-package org.itmo.constants;
+package org.itmo;
 
 public interface Commands {
     String BASE_COMMAND = "sokoban";

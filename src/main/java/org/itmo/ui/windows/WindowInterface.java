@@ -1,4 +1,4 @@
-package org.itmo.ui;
+package org.itmo.ui.windows;
 
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.input.KeyStroke;

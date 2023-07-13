@@ -1,6 +1,6 @@
 package org.itmo.game.objects;
 
-import static org.itmo.constants.Symbols.ENDPOINT;
+import static org.itmo.game.Symbols.ENDPOINT;
 
 import com.googlecode.lanterna.TerminalRectangle;
 

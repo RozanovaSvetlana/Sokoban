@@ -1,6 +1,6 @@
 package org.itmo.game.objects;
 
-import static org.itmo.constants.Symbols.PLAYER;
+import static org.itmo.game.Symbols.PLAYER;
 
 import com.googlecode.lanterna.TerminalRectangle;
 

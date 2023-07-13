@@ -1,7 +1,6 @@
 package org.itmo.game.logic;
 
 import java.util.List;
-import org.itmo.constants.Direction;
 import org.itmo.game.map.Map;
 
 public class Solver {

@@ -1,10 +1,9 @@
 package org.itmo.game;
 
 import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.input.KeyType;
 import java.io.IOException;
-import org.itmo.ui.GameWindow;
-import org.itmo.ui.LogoWindow;
+import org.itmo.ui.windows.GameWindow;
+import org.itmo.ui.windows.LogoWindow;
 
 /**
  * A class that responds to the user's click in an appropriate way

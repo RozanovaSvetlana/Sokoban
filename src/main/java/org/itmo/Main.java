@@ -1,6 +1,6 @@
 package org.itmo;
 
-import static org.itmo.constants.Commands.*;
+import static org.itmo.Commands.*;
 
 import java.io.IOException;
 import org.itmo.game.Controller;

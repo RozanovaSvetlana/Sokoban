@@ -1,9 +1,10 @@
-package org.itmo.ui;
+package org.itmo.ui.windows;
 
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import java.io.IOException;
+import org.itmo.ui.PrintAndManage;
 
 public class WindowImpl implements WindowInterface {
     static PrintAndManage screenPrinting;

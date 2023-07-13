@@ -1,6 +1,5 @@
 package org.itmo.game.logic;
 
-import org.itmo.constants.Direction;
 import org.itmo.game.map.Map;
 
 public class Game {
