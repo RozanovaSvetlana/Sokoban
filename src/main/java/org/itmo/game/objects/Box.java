@@ -10,7 +10,7 @@ public class Box extends GameObject implements GameObjectRepresentation {
     
     TextCharacter currentCharacter = RED_BOX;
     
-    protected Box(TerminalRectangle position) {
+    public Box(TerminalRectangle position) {
         super(position);
     }
     

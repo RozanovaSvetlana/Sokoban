@@ -6,7 +6,7 @@ import com.googlecode.lanterna.TerminalRectangle;
 import com.googlecode.lanterna.TextCharacter;
 
 public class Endpoint extends GameObject implements GameObjectRepresentation {
-    protected Endpoint(TerminalRectangle position) {
+    public Endpoint(TerminalRectangle position) {
         super(position);
     }
     
