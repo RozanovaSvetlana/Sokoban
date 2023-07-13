@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.stream.Collectors;
 import lombok.experimental.UtilityClass;
 
@@ -43,5 +44,9 @@ public class FileUtils {
      */
     public String getAllFileAsString(String fileName) throws IOException {
         return Files.readAllLines(Path.of(fileName)).stream().collect(Collectors.joining("\n"));
+    }
+    
+    public String getFileName(String file) {
+        return Paths.get(file).getFileName().toString();
     }
 }

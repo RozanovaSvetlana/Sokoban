@@ -12,12 +12,13 @@ public class GameWindow extends WindowImpl {
     Map map;
     private static String steps = "Steps: ";
     private static String time = "Time: ";
+    private static String fileName = "Name: ";
     
     /**
      * One column indented from the edge of the terminal on the left,
      * one on the right. Eight characters for time and ten spaces between entries.
      */
-    public static final int minColumnSize = steps.length() + time.length() + 20;
+    public static final int minColumnSize = fileName.length() + time.length() + 20;
     public static final int minRowSize = 5;
     private static final int rowIndentation = 4;
     private static int columnIndentation = 1;
@@ -27,17 +28,18 @@ public class GameWindow extends WindowImpl {
     private Optional<Timer> timerForPrintTime;
     private Optional<PrintTime> task;
     
-    public GameWindow(int columnSize, int rowSize, Map map) {
+    public GameWindow(int columnSize, int rowSize, String fileName, Map map) {
         super(columnSize, rowSize);
         this.map = map;
         if (map.getWidth() + 2 < columnSize) {
             columnIndentation = (columnSize - map.getWidth()) / 2;
         }
+        this.fileName += fileName;
     }
     
     @Override
     public void play() throws IOException {
-        screenPrinting.printString(0, 1, "Name: file_name");
+        screenPrinting.printString(0, 1, fileName);
         updateNumberSteps(0);
         refreshScreen();
         timerForPrintTime = Optional.of(new Timer());

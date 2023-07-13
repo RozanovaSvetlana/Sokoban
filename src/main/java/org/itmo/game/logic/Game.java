@@ -8,6 +8,7 @@ import org.itmo.game.map.Map;
 import org.itmo.ui.windows.GameWindow;
 import org.itmo.ui.windows.LogoWindow;
 import org.itmo.ui.windows.WindowImpl;
+import org.itmo.utils.FileUtils;
 
 public class Game {
     
@@ -34,8 +35,9 @@ public class Game {
      */
     public void toGameWindow(String fileName) throws IOException {
         map = Map.builder().setFileName(fileName).build();
-        currentWindow = new GameWindow(max(map.getWidth() + 2, GameWindow.minColumnSize),
-            map.getHeight() + GameWindow.minRowSize, map);
+        String name = FileUtils.getFileName(fileName);
+        currentWindow = new GameWindow(max(map.getWidth() + 2, GameWindow.minColumnSize + name.length()),
+            map.getHeight() + GameWindow.minRowSize, name, map);
         currentWindow.clearScreen();
         currentWindow.play();
     }
