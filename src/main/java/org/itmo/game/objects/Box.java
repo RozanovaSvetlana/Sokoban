@@ -31,7 +31,7 @@ public class Box extends GameObject implements GameObjectRepresentation {
     }
     
     @Override
-    public TextCharacter getRepresentation() {
-        return currentCharacter;
+    public TextCharacter[] getRepresentation() {
+        return new TextCharacter[] {currentCharacter};
     }
 }

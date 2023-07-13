@@ -15,9 +15,21 @@ public interface Symbols {
     
     TextCharacter GREEN_BOX = TextCharacter.fromCharacter('#', TextColor.ANSI.GREEN,
         TextColor.ANSI.DEFAULT)[0];
-    TextCharacter PLAYER = TextCharacter.fromCharacter('+', TextColor.ANSI.BLUE,
+    TextCharacter PLAYER_LEFT_SIDE_OF_HEAD = TextCharacter.fromCharacter('(', TextColor.ANSI.BLUE,
         TextColor.ANSI.DEFAULT)[0];
-    TextCharacter ENDPOINT = TextCharacter.fromCharacter(BULLET, TextColor.ANSI.GREEN,
+    
+    TextCharacter PLAYER_RIGHT_SIDE_OF_HEAD = TextCharacter.fromCharacter(')', TextColor.ANSI.BLUE,
+        TextColor.ANSI.DEFAULT)[0];
+    
+    TextCharacter PLAYER_LEFT_SIDE_OF_BODY = TextCharacter.fromCharacter('/', TextColor.ANSI.BLUE,
+        TextColor.ANSI.DEFAULT)[0];
+    
+    TextCharacter PLAYER_RIGHT_SIDE_OF_BODY = TextCharacter.fromCharacter('\\', TextColor.ANSI.BLUE,
+        TextColor.ANSI.DEFAULT)[0];
+    TextCharacter ENDPOINT_RIGHT = TextCharacter.fromCharacter('/', TextColor.ANSI.GREEN,
+        TextColor.ANSI.DEFAULT)[0];
+    
+    TextCharacter ENDPOINT_LEFT = TextCharacter.fromCharacter('\\', TextColor.ANSI.GREEN,
         TextColor.ANSI.DEFAULT)[0];
     
 }

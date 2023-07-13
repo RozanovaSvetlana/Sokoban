@@ -1,10 +1,12 @@
 package org.itmo.ui.windows;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 import org.itmo.game.map.Map;
+import org.itmo.game.objects.GameObject;
 
 public class GameWindow extends WindowImpl {
     Map map;
@@ -17,14 +19,20 @@ public class GameWindow extends WindowImpl {
      */
     public static final int minColumnSize = steps.length() + time.length() + 20;
     public static final int minRowSize = 5;
+    private static final int rowIndentation = 4;
+    private static int columnIndentation = 1;
     private static int hours = 0;
     private static int minutes = 0;
     private static int seconds = 0;
     private Optional<Timer> timerForPrintTime;
     private Optional<PrintTime> task;
     
-    public GameWindow(int columnSize, int rowSize) {
+    public GameWindow(int columnSize, int rowSize, Map map) {
         super(columnSize, rowSize);
+        this.map = map;
+        if (map.getWidth() + 2 < columnSize) {
+            columnIndentation = (columnSize - map.getWidth()) / 2;
+        }
     }
     
     @Override
@@ -35,15 +43,25 @@ public class GameWindow extends WindowImpl {
         timerForPrintTime = Optional.of(new Timer());
         task = Optional.of(new PrintTime());
         timerForPrintTime.get().schedule(task.get(), 0, 1000);
-        //вывод карты
+        printMap();
         //вывод справки
-        //вывод времени игры - 00:00 по дефолту
     }
     
     public void updateNumberSteps(int amount) {
         String strAmount = Integer.toString(amount);
         screenPrinting.printString(columnSize - steps.length() - strAmount.length() - 1,
             2, steps + strAmount);
+    }
+    
+    private void printMap() {
+        printListGameObjects(map.getWalls());
+        printListGameObjects(map.getBoxes());
+        printListGameObjects(map.getEndpoints());
+        map.getPlayer().print(screenPrinting, rowIndentation, columnIndentation);
+    }
+    
+    private void printListGameObjects(List<? extends GameObject> gameObjects) {
+        gameObjects.forEach((x) -> x.print(screenPrinting, rowIndentation, columnIndentation));
     }
     
     /**

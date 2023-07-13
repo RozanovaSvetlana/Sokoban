@@ -16,24 +16,45 @@ public class Game {
     int numberStep = 0;
     WindowImpl currentWindow;
     
+    /**
+     * Launches the logo window
+     * @throws IOException
+     */
     public void toLogoWindow() throws IOException {
         currentWindow = new LogoWindow();
         currentWindow.clearScreen();
         currentWindow.play();
     }
     
+    /**
+     * Launches the game window
+     *
+     * @param fileName - map file name
+     * @throws IOException
+     */
     public void toGameWindow(String fileName) throws IOException {
         map = Map.builder().setFileName(fileName).build();
-        currentWindow = new GameWindow(max(map.getWidth(), GameWindow.minColumnSize),
-            map.getHeight() + GameWindow.minRowSize);
+        currentWindow = new GameWindow(max(map.getWidth() + 2, GameWindow.minColumnSize),
+            map.getHeight() + GameWindow.minRowSize, map);
         currentWindow.clearScreen();
         currentWindow.play();
     }
     
+    /**
+     * Returns the pressed key
+     *
+     * @return KeyStroke
+     * @throws IOException
+     */
     public KeyStroke getKeyPressed() throws IOException {
         return currentWindow.getKeyPressed();
     }
     
+    /**
+     * Close terminal
+     *
+     * @throws IOException
+     */
     public void closeWindow() throws IOException {
         currentWindow.closeTerminal();
     }

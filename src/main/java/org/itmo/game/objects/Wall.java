@@ -12,7 +12,7 @@ public class Wall extends GameObject implements GameObjectRepresentation {
     }
     
     @Override
-    public TextCharacter getRepresentation() {
-        return WALL;
+    public TextCharacter[] getRepresentation() {
+        return new TextCharacter[] {WALL};
     }
 }
