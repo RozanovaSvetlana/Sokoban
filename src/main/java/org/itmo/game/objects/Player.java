@@ -19,11 +19,5 @@ public class Player extends GameObject implements GameObjectRepresentation{
         return new TextCharacter[] {PLAYER_LEFT_SIDE_OF_HEAD, PLAYER_RIGHT_SIDE_OF_HEAD,
                                     PLAYER_LEFT_SIDE_OF_BODY, PLAYER_RIGHT_SIDE_OF_BODY};
     }
-    
-    @Override
-    public void print(PrintAndManage printAndManage, int rowShift, int columnShift) {
-        TerminalRectangle positionWithShift = getPositionWithShift(rowShift, columnShift);
-        printAndManage.wipeOut(positionWithShift);
-        printAndManage.drawSpecialObject(positionWithShift, getRepresentation());
-    }
+
 }

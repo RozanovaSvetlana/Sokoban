@@ -10,10 +10,21 @@ public interface Symbols {
         TextColor.ANSI.DEFAULT)[0];
     TextCharacter WALL = TextCharacter.fromCharacter('@', TextColor.ANSI.DEFAULT,
         TextColor.ANSI.DEFAULT)[0];
-    TextCharacter RED_BOX = TextCharacter.fromCharacter('#', TextColor.ANSI.RED,
+    TextCharacter RED_BOX_LEFT_TOP = TextCharacter.fromCharacter(DOUBLE_LINE_TOP_LEFT_CORNER, TextColor.ANSI.RED,
         TextColor.ANSI.DEFAULT)[0];
     
-    TextCharacter GREEN_BOX = TextCharacter.fromCharacter('#', TextColor.ANSI.GREEN,
+    TextCharacter RED_BOX_RIGHT_TOP = TextCharacter.fromCharacter(DOUBLE_LINE_TOP_RIGHT_CORNER,
+        TextColor.ANSI.RED,
+        TextColor.ANSI.DEFAULT)[0];
+    
+    TextCharacter RED_BOX_LEFT_BOTTOM = TextCharacter.fromCharacter(DOUBLE_LINE_BOTTOM_LEFT_CORNER, TextColor.ANSI.RED,
+        TextColor.ANSI.DEFAULT)[0];
+    
+    TextCharacter RED_BOX_RIGHT_BOTTOM = TextCharacter.fromCharacter(DOUBLE_LINE_BOTTOM_RIGHT_CORNER,
+        TextColor.ANSI.RED,
+        TextColor.ANSI.DEFAULT)[0];
+    
+    TextCharacter GREEN_BOX = TextCharacter.fromCharacter(BLOCK_DENSE, TextColor.ANSI.GREEN,
         TextColor.ANSI.DEFAULT)[0];
     TextCharacter PLAYER_LEFT_SIDE_OF_HEAD = TextCharacter.fromCharacter('(', TextColor.ANSI.BLUE,
         TextColor.ANSI.DEFAULT)[0];
@@ -26,10 +37,18 @@ public interface Symbols {
     
     TextCharacter PLAYER_RIGHT_SIDE_OF_BODY = TextCharacter.fromCharacter('\\', TextColor.ANSI.BLUE,
         TextColor.ANSI.DEFAULT)[0];
-    TextCharacter ENDPOINT_RIGHT = TextCharacter.fromCharacter('/', TextColor.ANSI.GREEN,
+    TextCharacter ENDPOINT_RIGHT_TOP = TextCharacter.fromCharacter(SINGLE_LINE_TOP_LEFT_CORNER,
+        TextColor.ANSI.GREEN,
         TextColor.ANSI.DEFAULT)[0];
     
-    TextCharacter ENDPOINT_LEFT = TextCharacter.fromCharacter('\\', TextColor.ANSI.GREEN,
+    TextCharacter ENDPOINT_LEFT_TOP = TextCharacter.fromCharacter(SINGLE_LINE_TOP_RIGHT_CORNER, TextColor.ANSI.GREEN,
+        TextColor.ANSI.DEFAULT)[0];
+    
+    TextCharacter ENDPOINT_RIGHT_BOTTOM = TextCharacter.fromCharacter(SINGLE_LINE_BOTTOM_LEFT_CORNER,
+        TextColor.ANSI.GREEN,
+        TextColor.ANSI.DEFAULT)[0];
+    
+    TextCharacter ENDPOINT_LEFT_BOTTOM = TextCharacter.fromCharacter(SINGLE_LINE_BOTTOM_RIGHT_CORNER, TextColor.ANSI.GREEN,
         TextColor.ANSI.DEFAULT)[0];
     
 }

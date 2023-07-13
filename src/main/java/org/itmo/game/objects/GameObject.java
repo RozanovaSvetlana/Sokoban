@@ -21,7 +21,7 @@ public abstract class GameObject implements GameObjectRepresentation{
     public void print(PrintAndManage printAndManage, int rowShift, int columnShift) {
         TerminalRectangle positionWithShift = getPositionWithShift(rowShift, columnShift);
         printAndManage.wipeOut(positionWithShift);
-        printAndManage.drawRectangle(positionWithShift, getRepresentation()[0]);
+        printAndManage.drawSpecialObject(positionWithShift, getRepresentation());
     }
     
     protected TerminalRectangle getPositionWithShift(int rowShift, int columnShift) {
