@@ -8,13 +8,24 @@ import org.itmo.game.map.Map;
 
 public class GameWindow extends WindowImpl {
     Map map;
-    private String steps = "Steps: ";
-    private String time = "Time: ";
+    private static String steps = "Steps: ";
+    private static String time = "Time: ";
+    
+    /**
+     * One column indented from the edge of the terminal on the left,
+     * one on the right. Eight characters for time and ten spaces between entries.
+     */
+    public static final int minColumnSize = steps.length() + time.length() + 20;
+    public static final int minRowSize = 5;
     private static int hours = 0;
     private static int minutes = 0;
     private static int seconds = 0;
     private Optional<Timer> timerForPrintTime;
     private Optional<PrintTime> task;
+    
+    public GameWindow(int columnSize, int rowSize) {
+        super(columnSize, rowSize);
+    }
     
     @Override
     public void play() throws IOException {

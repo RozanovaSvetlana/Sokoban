@@ -13,7 +13,7 @@ public class Main {
             if (args[0].equals(BASE_COMMAND)) {
                 switch (args[1]) {
                     case PLAY -> {
-                        new Controller().play();
+                        new Controller("src\\main\\resources\\first_level.json").play();
                     }
                     case LOAD_LEVEL -> {
                     

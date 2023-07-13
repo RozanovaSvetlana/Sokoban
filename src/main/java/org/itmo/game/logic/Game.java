@@ -1,5 +1,7 @@
 package org.itmo.game.logic;
 
+import static java.lang.Math.max;
+
 import com.googlecode.lanterna.input.KeyStroke;
 import java.io.IOException;
 import org.itmo.game.map.Map;
@@ -20,8 +22,10 @@ public class Game {
         currentWindow.play();
     }
     
-    public void toGameWindow() throws IOException {
-        currentWindow = new GameWindow();
+    public void toGameWindow(String fileName) throws IOException {
+        map = Map.builder().setFileName(fileName).build();
+        currentWindow = new GameWindow(max(map.getWidth(), GameWindow.minColumnSize),
+            map.getHeight() + GameWindow.minRowSize);
         currentWindow.clearScreen();
         currentWindow.play();
     }

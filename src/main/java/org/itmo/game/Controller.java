@@ -10,10 +10,15 @@ import org.itmo.game.logic.Game;
 public class Controller {
     
     private static final Game gameLogic = new Game();
+    private String fileName;
+    
+    public Controller(String fileName) {
+        this.fileName = fileName;
+    }
     
     public void play() throws IOException {
         if(startGame()) {
-            gameLogic.toGameWindow();
+            gameLogic.toGameWindow(fileName);
             while (true) {
                 KeyStroke input = gameLogic.getKeyPressed();
                 if(input != null) {
