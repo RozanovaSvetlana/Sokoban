@@ -6,6 +6,9 @@ import com.googlecode.lanterna.TerminalPosition;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Optional;
+import java.util.Timer;
+import java.util.TimerTask;
 import org.itmo.utils.FileUtils;
 
 public class LogoWindow extends WindowImpl {
@@ -13,6 +16,8 @@ public class LogoWindow extends WindowImpl {
     private int pressEnterForStartColumn = 0;
     private int pressEnterForStartRow = 0;
     private String pressEnterForStartString = "press enter to start game";
+    private Optional<Timer> timerForPrintInscription;
+    private Optional<PrintInscriptionPressEnter> task;
     
     /**
      * Print logo
@@ -44,6 +49,9 @@ public class LogoWindow extends WindowImpl {
                 row++;
             }
             pressEnterForStartRow = row + 2;
+            timerForPrintInscription = Optional.of(new Timer());
+            task = Optional.of(new PrintInscriptionPressEnter());
+            timerForPrintInscription.get().schedule(task.get(), 0, 1000);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -62,5 +70,25 @@ public class LogoWindow extends WindowImpl {
             pressEnterForStartString);
         refreshScreen();
         Thread.sleep(1000);
+    }
+    
+    @Override
+    public void closeTerminal() throws IOException {
+        super.closeTerminal();
+        task.ifPresent(TimerTask::cancel);
+        timerForPrintInscription.ifPresent(Timer::cancel);
+    }
+    
+    /**
+     * Class for schedule task - print inscription
+     */
+    private class PrintInscriptionPressEnter extends TimerTask {
+        @Override
+        public void run() {
+            try {
+                enterPressed();
+            } catch (Exception e) {
+            }
+        }
     }
 }

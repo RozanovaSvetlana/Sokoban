@@ -43,23 +43,20 @@ public class Controller {
         }
     }
     
-    private boolean startGame() throws IOException, InterruptedException {
+    private boolean startGame() throws IOException {
         LogoWindow logo = new LogoWindow();
         logo.clearScreen();
         logo.play();
         while (true) {
-            logo.enterPressed();
             KeyStroke input = logo.getKeyPressed();
-            if(input != null) {
-                switch (input.getKeyType()) {
-                    case Enter -> {
-                        logo.closeTerminal();
-                        return true;
-                    }
-                    case Escape -> {
-                        logo.closeTerminal();
-                        return false;
-                    }
+            switch (input.getKeyType()) {
+                case Enter -> {
+                    logo.closeTerminal();
+                    return true;
+                }
+                case Escape -> {
+                    logo.closeTerminal();
+                    return false;
                 }
             }
         }

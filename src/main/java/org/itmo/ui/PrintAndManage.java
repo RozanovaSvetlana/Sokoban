@@ -16,10 +16,10 @@ public class PrintAndManage {
     private static TextGraphics textGraphics;
     
     public PrintAndManage(Terminal terminal) throws IOException {
-        this.terminal = terminal;
-        this.screen = new TerminalScreen(terminal);
+        PrintAndManage.terminal = terminal;
+        screen = new TerminalScreen(terminal);
         screen.startScreen();
-        this.terminal.setCursorVisible(false);
+        PrintAndManage.terminal.setCursorVisible(false);
         textGraphics = screen.newTextGraphics();
     }
     
@@ -53,12 +53,12 @@ public class PrintAndManage {
      *
      * @throws IOException
      */
-    public void clearScreen() throws IOException {
+    public void clearScreen() {
         screen.clear();
     }
     
     public KeyStroke getKeyPressed() throws IOException {
-        return screen.pollInput();
+        return screen.readInput();
     }
     
     public void closeTerminal() throws IOException {
