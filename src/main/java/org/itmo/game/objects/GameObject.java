@@ -1,10 +1,8 @@
 package org.itmo.game.objects;
 
 import com.googlecode.lanterna.TerminalRectangle;
-import com.googlecode.lanterna.graphics.TextGraphics;
 import lombok.Getter;
 import lombok.Setter;
-import org.itmo.game.Symbols;
 import org.itmo.ui.PrintAndManage;
 
 public abstract class GameObject implements GameObjectRepresentation{
