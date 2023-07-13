@@ -4,10 +4,14 @@ import static org.itmo.game.Symbols.GREEN_BOX;
 import static org.itmo.game.Symbols.RED_BOX;
 
 import com.googlecode.lanterna.TerminalRectangle;
+import com.googlecode.lanterna.TextCharacter;
 
-public class Box extends GameObject{
+public class Box extends GameObject implements GameObjectRepresentation {
+    
+    TextCharacter currentCharacter = RED_BOX;
+    
     protected Box(TerminalRectangle position) {
-        super(RED_BOX, position);
+        super(position);
     }
     
     /**
@@ -15,7 +19,7 @@ public class Box extends GameObject{
      * Used when the crate is placed at the end point
      */
     public void setEndpointBox() {
-        setCharacter(GREEN_BOX);
+        currentCharacter = GREEN_BOX;
     }
     
     /**
@@ -23,6 +27,11 @@ public class Box extends GameObject{
      * Used if the crate is removed from the end point
      */
     public void setNotEndpointBox() {
-        setCharacter(RED_BOX);
+        currentCharacter = RED_BOX;
+    }
+    
+    @Override
+    public TextCharacter getRepresentation() {
+        return currentCharacter;
     }
 }
