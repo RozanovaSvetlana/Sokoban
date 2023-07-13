@@ -1,8 +1,5 @@
 package org.itmo.ui.windows;
 
-import static org.itmo.game.Symbols.SPACE;
-
-import com.googlecode.lanterna.TerminalPosition;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -12,6 +9,7 @@ import java.util.TimerTask;
 import org.itmo.utils.FileUtils;
 
 public class LogoWindow extends WindowImpl {
+    final Object lock = new Object();
     private static final String fileName = "logo";
     private int pressEnterForStartColumn = 0;
     private int pressEnterForStartRow = 0;
@@ -51,42 +49,44 @@ public class LogoWindow extends WindowImpl {
             pressEnterForStartRow = row + 2;
             timerForPrintInscription = Optional.of(new Timer());
             task = Optional.of(new PrintInscriptionPressEnter());
-            timerForPrintInscription.get().schedule(task.get(), 0, 1000);
+            timerForPrintInscription.get().schedule(task.get(), 0, 2500);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         refreshScreen();
     }
     
-    /**
-     * Imitates blinking of line
-     */
-    public void enterPressed() throws IOException, InterruptedException {
-        screenPrinting.printLineSingleCharacter(new TerminalPosition(0, pressEnterForStartRow),
-            new TerminalPosition(columnSize, pressEnterForStartRow), SPACE);
-        refreshScreen();
-        Thread.sleep(1000);
-        screenPrinting.printString(pressEnterForStartColumn, pressEnterForStartRow,
-            pressEnterForStartString);
-        refreshScreen();
-        Thread.sleep(1000);
-    }
-    
     @Override
     public void closeTerminal() throws IOException {
-        super.closeTerminal();
-        task.ifPresent(TimerTask::cancel);
-        timerForPrintInscription.ifPresent(Timer::cancel);
+        synchronized(lock) {
+            task.ifPresent((x) -> PrintInscriptionPressEnter.isClose = true);
+            task.ifPresent(TimerTask::cancel);
+            timerForPrintInscription.ifPresent(Timer::cancel);
+            screenPrinting.clearScreen();
+            screenPrinting.closeTerminal();
+        }
     }
     
     /**
      * Class for schedule task - print inscription
      */
     private class PrintInscriptionPressEnter extends TimerTask {
+        public static boolean isClose = false;
+        
         @Override
         public void run() {
             try {
-                enterPressed();
+                screenPrinting.wipeOut(0, pressEnterForStartRow, columnSize,
+                    pressEnterForStartRow);
+                refreshScreen();
+                Thread.sleep(1000);
+                synchronized (lock) {
+                    if(!isClose) {
+                        screenPrinting.printString(pressEnterForStartColumn, pressEnterForStartRow,
+                            pressEnterForStartString);
+                        refreshScreen();
+                    }
+                }
             } catch (Exception e) {
             }
         }
