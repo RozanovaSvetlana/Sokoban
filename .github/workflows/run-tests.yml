@@ -5,6 +5,7 @@ on:
 
 jobs:
   test-windows:
+
     runs-on: windows-latest
     steps:
       - name: Checkout project sources
