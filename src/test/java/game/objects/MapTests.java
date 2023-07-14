@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 public class MapTests {
     
-    private static final String jsonFileNameForTest = "src\\\\test\\\\resources\\test_lvl.json";
+    private static final String jsonFileNameForTest = "src/test/resources/test_lvl.json";
     
     @Test
     public void buildFromJsonTest() {
