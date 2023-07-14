@@ -10,5 +10,5 @@ public interface GameObjectRepresentation {
      * @return TextCharacter
      */
     TextCharacter[] getRepresentation();
-    void print(PrintAndManage printAndManage, int rowShift, int columnShift);
+    void print(PrintAndManage printAndManage);
 }

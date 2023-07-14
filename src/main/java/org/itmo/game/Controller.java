@@ -1,7 +1,9 @@
 package org.itmo.game;
 
 import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import java.io.IOException;
+import org.itmo.game.logic.Direction;
 import org.itmo.game.logic.Game;
 
 /**
@@ -24,23 +26,37 @@ public class Controller {
                 if(input != null) {
                     switch (input.getKeyType()) {
                         case ArrowUp -> {
-                        
+                            gameLogic.takeStep(Direction.UP);
                         }
                         case ArrowRight -> {
-                        
+                            gameLogic.takeStep(Direction.RIGHT);
                         }
                         case ArrowDown -> {
-                        
+                            gameLogic.takeStep(Direction.DOWN);
                         }
                         case ArrowLeft -> {
-                        
+                            gameLogic.takeStep(Direction.LEFT);
                         }
                         case Escape -> {
                             gameLogic.closeWindow();
                             return;
                         }
                         case Character -> {
-                            //для обработки WASD
+                            Character key = input.getCharacter();
+                            switch (key) {
+                                case 'w' | 'ц' -> {
+                                    gameLogic.takeStep(Direction.UP);
+                                }
+                                case 'd' | 'в' -> {
+                                    gameLogic.takeStep(Direction.RIGHT);
+                                }
+                                case 's' | 'ы' -> {
+                                    gameLogic.takeStep(Direction.DOWN);
+                                }
+                                case 'a' | 'ф' -> {
+                                    gameLogic.takeStep(Direction.LEFT);
+                                }
+                            }
                         }
                     }
                 }

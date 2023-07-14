@@ -1,10 +1,12 @@
 package org.itmo.ui.windows;
 
+import com.googlecode.lanterna.TerminalRectangle;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
+import lombok.Getter;
 import org.itmo.game.map.Map;
 import org.itmo.game.objects.GameObject;
 
@@ -20,8 +22,12 @@ public class GameWindow extends WindowImpl {
      */
     public static final int minColumnSize = fileName.length() + time.length() + 20;
     public static final int minRowSize = 5;
-    private static final int rowIndentation = 4;
-    private static int columnIndentation = 1;
+    
+    @Getter
+    private static final int rowShift = 4;
+    
+    @Getter
+    private static int columnShift = 1;
     private static int hours = 0;
     private static int minutes = 0;
     private static int seconds = 0;
@@ -32,7 +38,7 @@ public class GameWindow extends WindowImpl {
         super(columnSize, rowSize);
         this.map = map;
         if (map.getWidth() + 2 < columnSize) {
-            columnIndentation = (columnSize - map.getWidth()) / 2;
+            columnShift = (columnSize - map.getWidth()) / 2;
         }
         this.fileName += fileName;
     }
@@ -59,11 +65,15 @@ public class GameWindow extends WindowImpl {
         printListGameObjects(map.getWalls());
         printListGameObjects(map.getBoxes());
         printListGameObjects(map.getEndpoints());
-        map.getPlayer().print(screenPrinting, rowIndentation, columnIndentation);
+        map.getPlayer().print(screenPrinting);
     }
     
     private void printListGameObjects(List<? extends GameObject> gameObjects) {
-        gameObjects.forEach((x) -> x.print(screenPrinting, rowIndentation, columnIndentation));
+        gameObjects.forEach(this::printGameObject);
+    }
+    
+    private void printGameObject(GameObject object) {
+        object.print(screenPrinting);
     }
     
     /**
@@ -79,6 +89,17 @@ public class GameWindow extends WindowImpl {
             hours += minutes / 60;
             minutes = minutes % 60;
         }
+    }
+    
+    public void reprintPlayer(TerminalRectangle oldPosition) throws IOException {
+        screenPrinting.wipeOut(oldPosition);
+        screenPrinting.refreshScreen();
+        printGameObject(map.getPlayer());
+    }
+    
+    public void printEndpointOnPosition(TerminalRectangle position) {
+        map.getEndpoints().stream().filter((x) -> x.getPosition().equals(position)).findFirst()
+            .ifPresent((x) -> x.print(screenPrinting));
     }
     
     @Override

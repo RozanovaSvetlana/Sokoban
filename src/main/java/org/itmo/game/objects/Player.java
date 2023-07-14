@@ -28,7 +28,7 @@ public class Player extends GameObject implements GameObjectRepresentation {
     }
     
     public void setLeftTurn() {
-        setTurning(PLAYER_RIGHT_SIDE_OF_BODY_LEFT_TURN, PLAYER_RIGHT_SIDE_OF_BODY_RIGHT_TURN);
+        setTurning(PLAYER_RIGHT_SIDE_OF_BODY_LEFT_TURN, PLAYER_RIGHT_SIDE_OF_BODY);
     }
     
     public void setStraight() {

@@ -18,9 +18,8 @@ public class Wall extends GameObject implements GameObjectRepresentation {
     }
     
     @Override
-    public void print(PrintAndManage printAndManage, int rowShift, int columnShift) {
-        TerminalRectangle positionWithShift = getPositionWithShift(rowShift, columnShift);
-        printAndManage.wipeOut(positionWithShift);
-        printAndManage.drawRectangle(positionWithShift, getRepresentation()[0]);
+    public void print(PrintAndManage printAndManage) {
+        printAndManage.wipeOut(position);
+        printAndManage.drawRectangle(position, getRepresentation()[0]);
     }
 }
