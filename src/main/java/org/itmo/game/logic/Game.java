@@ -97,8 +97,8 @@ public class Game {
             }
         }
         window.reprintPlayer(oldPosition);
-        window.printEndpointOnPosition(oldPosition);
         if(!oldPosition.equals(map.getPlayer().getPosition())) {
+            window.printEndpointOnPosition(oldPosition);
             numberStep++;
             window.updateNumberSteps(numberStep);
         }
