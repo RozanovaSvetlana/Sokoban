@@ -16,13 +16,14 @@ public class GameWindow extends WindowImpl {
     private static String steps = "Steps: ";
     private static String time = "Time: ";
     private static String fileName = "Name: ";
+    private static String win = "You win! Press enter or esc to exit!";
     
     /**
      * One column indented from the edge of the terminal on the left,
      * one on the right. Eight characters for time and ten spaces between entries.
      */
     public static final int minColumnSize = fileName.length() + time.length() + 20;
-    public static final int minRowSize = 5;
+    public static final int minRowSize = 7;
     
     @Getter
     private static final int rowShift = 4;
@@ -113,6 +114,12 @@ public class GameWindow extends WindowImpl {
         timerForPrintTime.ifPresent(Timer::cancel);
         screenPrinting.clearScreen();
         screenPrinting.closeTerminal();
+    }
+    
+    public void setWin() {
+        task.ifPresent(TimerTask::cancel);
+        timerForPrintTime.ifPresent(Timer::cancel);
+        screenPrinting.printString((columnSize - win.length()) / 2, rowsSize - 2, win);
     }
     
     private class PrintTime extends TimerTask {

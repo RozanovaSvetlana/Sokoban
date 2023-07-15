@@ -26,16 +26,24 @@ public class Controller {
                 if(input != null) {
                     switch (input.getKeyType()) {
                         case ArrowUp -> {
-                            gameLogic.takeStep(Direction.UP);
+                            if(takeStep(Direction.UP)) {
+                                return;
+                            }
                         }
                         case ArrowRight -> {
-                            gameLogic.takeStep(Direction.RIGHT);
+                            if(takeStep(Direction.RIGHT)) {
+                                return;
+                            }
                         }
                         case ArrowDown -> {
-                            gameLogic.takeStep(Direction.DOWN);
+                            if(takeStep(Direction.DOWN)) {
+                                return;
+                            }
                         }
                         case ArrowLeft -> {
-                            gameLogic.takeStep(Direction.LEFT);
+                            if(takeStep(Direction.LEFT)) {
+                                return;
+                            }
                         }
                         case Escape -> {
                             gameLogic.closeWindow();
@@ -44,17 +52,25 @@ public class Controller {
                         case Character -> {
                             Character key = input.getCharacter();
                             switch (key) {
-                                case 'w' | 'ц' -> {
-                                    gameLogic.takeStep(Direction.UP);
+                                case 'w', 'ц' -> {
+                                    if(takeStep(Direction.UP)) {
+                                        return;
+                                    }
                                 }
-                                case 'd' | 'в' -> {
-                                    gameLogic.takeStep(Direction.RIGHT);
+                                case 'd', 'в' -> {
+                                    if(takeStep(Direction.RIGHT)) {
+                                        return;
+                                    }
                                 }
-                                case 's' | 'ы' -> {
-                                    gameLogic.takeStep(Direction.DOWN);
+                                case 's', 'ы' -> {
+                                    if(takeStep(Direction.DOWN)) {
+                                        return;
+                                    }
                                 }
-                                case 'a' | 'ф' -> {
-                                    gameLogic.takeStep(Direction.LEFT);
+                                case 'a', 'ф' -> {
+                                    if(takeStep(Direction.LEFT)) {
+                                        return;
+                                    }
                                 }
                             }
                         }
@@ -79,5 +95,20 @@ public class Controller {
                 }
             }
         }
+    }
+    
+    private boolean takeStep(Direction direction) throws IOException {
+        if(gameLogic.takeStep(direction)) {
+            while (true) {
+                KeyStroke input = gameLogic.getKeyPressed();
+                switch (input.getKeyType()) {
+                    case Enter, Escape -> {
+                        gameLogic.closeWindow();
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 }

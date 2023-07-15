@@ -99,6 +99,11 @@ public class Game {
             numberStep++;
             window.updateNumberSteps(numberStep);
         }
+        if(numberOccupiedEndpoints == map.getEndpoints().size()) {
+            window.setWin();
+            window.refreshScreen();
+            return true;
+        }
         window.refreshScreen();
         return false;
     }
@@ -205,11 +210,6 @@ public class Game {
             window.printBox(box);
             return true;
         }
-        return false;
-    }
-    
-    public boolean isSolved() {
-        //проверяет, решен ли уровень
         return false;
     }
     
