@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import org.itmo.game.map.Map;
+import org.itmo.game.objects.Box;
 import org.itmo.game.objects.GameObject;
 import org.itmo.ui.windows.GameWindow;
 import org.itmo.ui.windows.LogoWindow;
@@ -77,23 +78,19 @@ public class Game {
         switch (direction) {
             case UP -> {
                 map.getPlayer().setStraight();
-                changePosition(map.getPlayer(),
-                    getNewPositionBasedOnDirection(map.getPlayer().getPosition(), UP));
+                step(UP);
             }
             case DOWN -> {
                 map.getPlayer().setStraight();
-                changePosition(map.getPlayer(),
-                    getNewPositionBasedOnDirection(map.getPlayer().getPosition(), DOWN));
+                step(DOWN);
             }
             case LEFT -> {
                 map.getPlayer().setLeftTurn();
-                changePosition(map.getPlayer(),
-                    getNewPositionBasedOnDirection(map.getPlayer().getPosition(), LEFT));
+                step(LEFT);
             }
             case RIGHT -> {
                 map.getPlayer().setRightTurn();
-                changePosition(map.getPlayer(),
-                    getNewPositionBasedOnDirection(map.getPlayer().getPosition(), RIGHT));
+                step(RIGHT);
             }
         }
         window.reprintPlayer(oldPosition);
@@ -104,6 +101,18 @@ public class Game {
         }
         window.refreshScreen();
         return false;
+    }
+    
+    private void step(Direction direction) {
+        TerminalRectangle newPositionBasedOnDirection =
+            getNewPositionBasedOnDirection(map.getPlayer().getPosition(), direction);
+        if(isBox(newPositionBasedOnDirection)) {
+            if(moveBox(newPositionBasedOnDirection, direction)) {
+                changePosition(map.getPlayer(), newPositionBasedOnDirection);
+            }
+        } else {
+            changePosition(map.getPlayer(), newPositionBasedOnDirection);
+        }
     }
     
     private TerminalRectangle getNewPositionBasedOnDirection(TerminalRectangle oldPosition,
@@ -145,6 +154,10 @@ public class Game {
         return isGameObjectInCell(map.getWalls(), position);
     }
     
+    private boolean isBox(TerminalRectangle position) {
+        return isGameObjectInCell(map.getBoxes(), position);
+    }
+    
     private boolean isEndpoint(TerminalRectangle position) {
         return isGameObjectInCell(map.getEndpoints(), position);
     }
@@ -174,9 +187,25 @@ public class Game {
         });
     }
     
-    private void moveBox() {
-        //изменяем местоположение ящика
-        //делаем проверку, если ящик встал/ушел с конечной точки, то изменяем его
+    private boolean moveBox(TerminalRectangle position, Direction direction) {
+        TerminalRectangle newPositionBasedOnDirection =
+            getNewPositionBasedOnDirection(position, direction);
+        if(!isWall(newPositionBasedOnDirection) && !isBox(newPositionBasedOnDirection)) {
+            Box box = map.getBoxes().stream().filter((x) -> x.getPosition().equals(position))
+                .findFirst().get();
+            if(isEndpoint(box.getPosition())) {
+                box.setNotEndpointBox();
+                numberOccupiedEndpoints--;
+            }
+            changePosition(box, newPositionBasedOnDirection);
+            if(isEndpoint(newPositionBasedOnDirection)) {
+                box.setEndpointBox();
+                numberOccupiedEndpoints++;
+            }
+            window.printBox(box);
+            return true;
+        }
+        return false;
     }
     
     public boolean isSolved() {

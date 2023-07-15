@@ -8,6 +8,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import lombok.Getter;
 import org.itmo.game.map.Map;
+import org.itmo.game.objects.Box;
 import org.itmo.game.objects.GameObject;
 
 public class GameWindow extends WindowImpl {
@@ -100,6 +101,10 @@ public class GameWindow extends WindowImpl {
     public void printEndpointOnPosition(TerminalRectangle position) {
         map.getEndpoints().stream().filter((x) -> x.getPosition().equals(position)).findFirst()
             .ifPresent((x) -> x.print(screenPrinting));
+    }
+    
+    public void printBox(Box box) {
+        box.print(screenPrinting);
     }
     
     @Override
