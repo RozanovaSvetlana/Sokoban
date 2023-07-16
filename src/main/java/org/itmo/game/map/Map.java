@@ -1,9 +1,14 @@
 package org.itmo.game.map;
 
+import static java.lang.Math.max;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalRectangle;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,6 +18,7 @@ import org.itmo.game.objects.Endpoint;
 import org.itmo.game.objects.GameObject;
 import org.itmo.game.objects.Player;
 import org.itmo.game.objects.Wall;
+import org.itmo.game.objects.WallsLoader;
 import org.itmo.game.objects.jsonObjects.JsonMap;
 import org.itmo.game.objects.jsonObjects.JsonObject;
 import org.itmo.utils.FileUtils;
@@ -114,8 +120,74 @@ public class Map {
                     throw new RuntimeException(e);
                 }
             } else {
-                //TODO
-                return null;
+                try(BufferedReader reader =
+                        new BufferedReader(new InputStreamReader(FileUtils.getFile(fileName)))) {
+                    Map mp = new Map();
+                    mp.height = 0;
+                    mp.width = 0;
+                    WallsLoader wallsLoader = new WallsLoader();
+                    while (reader.ready()) {
+                        String line = reader.readLine();
+                        mp.width = max(mp.width, line.trim().length());
+                        addGameObjectFromString(wallsLoader, mp, line);
+                        mp.height += 2;
+                    }
+                    mp.walls = wallsLoader.getWalls().entrySet().stream().map(entry -> {
+                        TerminalPosition wallStart = entry.getValue();
+                        TerminalPosition wallEnd = entry.getKey();
+                        int width = Math.abs(wallStart.getColumn() - wallEnd.getColumn()) + 2;
+                        int height = Math.abs(wallStart.getRow() - wallEnd.getRow()) + 2;
+                        return new Wall(
+                            new TerminalRectangle(wallStart.getColumn(), wallStart.getRow(), width,
+                                height));
+                    }).collect(Collectors.toList());
+                    return mp;
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        
+        private void addGameObjectFromString(WallsLoader wallsLoader, Map mp, String line) {
+            List<Integer> gameObjectInString =
+                getAllIndexGameObjectInString(line, '+');
+            if(!gameObjectInString.isEmpty()) {
+                mp.player = new Player(
+                    new TerminalRectangle(gameObjectInString.get(0) * 2,
+                        mp.height, 2, 2));
+            }
+            gameObjectInString = getAllIndexGameObjectInString(line, 'x');
+            if(!gameObjectInString.isEmpty()) {
+                gameObjectInString.forEach((x) -> mp.getBoxes()
+                    .add(new Box(
+                        new TerminalRectangle(x * 2, mp.height, 2, 2))));
+            }
+            gameObjectInString = getAllIndexGameObjectInString(line, '.');
+            if(!gameObjectInString.isEmpty()) {
+                gameObjectInString.forEach((x) -> mp.getEndpoints()
+                    .add(new Endpoint(
+                        new TerminalRectangle(x * 2, mp.height, 2, 2))));
+            }
+            addWalls(mp, wallsLoader, line);
+        }
+        
+        private List<Integer> getAllIndexGameObjectInString(String line, char symbol) {
+            int index = line.indexOf(symbol);
+            List<Integer> allIndex = new ArrayList<>();
+            while (index != -1) {
+                allIndex.add(index);
+                index = line.indexOf(symbol, index + 1);
+            }
+            return allIndex;
+        }
+        
+        private void addWalls(Map mp, WallsLoader wallsLoader, String line) {
+            for (int i = 0; i < line.length(); i++) {
+                if (line.charAt(i) == '@') {
+                    TerminalRectangle position = new TerminalRectangle(i * 2,
+                        mp.height, 2, 2);
+                    wallsLoader.getWalls(position, i * 2, mp.height);
+                }
             }
         }
         
