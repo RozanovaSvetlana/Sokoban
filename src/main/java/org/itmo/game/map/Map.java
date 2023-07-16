@@ -36,6 +36,10 @@ public class Map {
     
     private Map() {}
     
+    /**
+     * Get builder for map
+     * @return MapBuilder
+     */
     public static MapBuilder builder() {
         return new MapBuilder();
     }
@@ -44,6 +48,11 @@ public class Map {
         fromJsonMapToMap(map);
     }
     
+    /**
+     * Performs the conversion from jsonMap to a map object
+     *
+     * @param jsonMap - map description in jsonMap format
+     */
     private void fromJsonMapToMap(JsonMap jsonMap) {
         width = jsonMap.getWidth() * 2;
         height = jsonMap.getHeight() * 2;
@@ -56,10 +65,20 @@ public class Map {
         player = new Player(jsonMap.getPlayer().terminalRectanglePosition());
     }
     
+    /**
+     * Performs conversion from a map to a json string
+     *
+     * @return map description in json format
+     * @throws JsonProcessingException
+     */
     public String fromMapToJsonString() throws JsonProcessingException {
         return new ObjectMapper().writeValueAsString(fromMapToJsonMap());
     }
     
+    /**
+     * Performs conversion from map to jsonMap
+     * @return map description in jsonMap format
+     */
     private JsonMap fromMapToJsonMap() {
         JsonMap jsonMap = new JsonMap();
         jsonMap.setWidth(width / 2);
@@ -71,10 +90,21 @@ public class Map {
         return jsonMap;
     }
     
+    /**
+     * Converts a list of GameObjects to a list of JsonObjects
+     *
+     * @param objects - conversion objects
+     * @return description of GameObjects in JsonObjects format
+     */
     private List<JsonObject> gameObjectListToJsonObjectList(List<? extends GameObject> objects) {
         return objects.stream().map(this::gameObjectToJsonObject).collect(Collectors.toList());
     }
     
+    /**
+     * Converting a GameObject to a JsonObject
+     * @param object - conversion object
+     * @return description of GameObject in JsonObject format
+     */
     private JsonObject gameObjectToJsonObject(GameObject object) {
         TerminalRectangle position = object.getPosition();
         return new JsonObject(position.x / 2, position.y / 2, position.width / 2,
@@ -101,6 +131,10 @@ public class Map {
             return this;
         }
         
+        /**
+         * Builds a map according to the given parameters
+         * @return constructed map
+         */
         public Map build() {
             if (!fileName.equals("")) {
                 return buildFromFile();
@@ -109,6 +143,10 @@ public class Map {
             return new Map();
         }
         
+        /**
+         * Builds a map from a file
+         * @return constructed map
+         */
         private Map buildFromFile() {
             if (fileName.endsWith(".json")) {
                 try {
@@ -148,6 +186,13 @@ public class Map {
             }
         }
         
+        /**
+         * Parses the read string to GameObjects
+         *
+         * @param wallsLoader - wall handler in the string
+         * @param mp - map for adding found objects
+         * @param line - processing string
+         */
         private void addGameObjectFromString(WallsLoader wallsLoader, Map mp, String line) {
             List<Integer> gameObjectInString =
                 getAllIndexGameObjectInString(line, '+');
@@ -168,9 +213,16 @@ public class Map {
                     .add(new Endpoint(
                         new TerminalRectangle(x * 2, mp.height, 2, 2))));
             }
-            addWalls(mp, wallsLoader, line);
+            addWalls(mp.height, wallsLoader, line);
         }
         
+        /**
+         * Gets the index of all occurrences of the character in the string to search GameObject
+         *
+         * @param line - processing string
+         * @param symbol - string search character
+         * @return index list of all occurrences of the symbol
+         */
         private List<Integer> getAllIndexGameObjectInString(String line, char symbol) {
             int index = line.indexOf(symbol);
             List<Integer> allIndex = new ArrayList<>();
@@ -181,12 +233,18 @@ public class Map {
             return allIndex;
         }
         
-        private void addWalls(Map mp, WallsLoader wallsLoader, String line) {
+        /**
+         * Searches for walls in the line
+         * @param height - y line coordinate
+         * @param wallsLoader - wall handler in the string
+         * @param line - processing string
+         */
+        private void addWalls(int height, WallsLoader wallsLoader, String line) {
             for (int i = 0; i < line.length(); i++) {
                 if (line.charAt(i) == '@') {
                     TerminalRectangle position = new TerminalRectangle(i * 2,
-                        mp.height, 2, 2);
-                    wallsLoader.getWalls(position, i * 2, mp.height);
+                        height, 2, 2);
+                    wallsLoader.getWalls(position, i * 2, height);
                 }
             }
         }

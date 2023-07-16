@@ -73,6 +73,13 @@ public class Game {
         currentWindow.closeTerminal();
     }
     
+    /**
+     * Takes a step in the specified direction and causes a redraw if necessary
+     *
+     * @param direction - step direction
+     * @return True - if the step was the last (i.e. the game is over), false - otherwise
+     * @throws IOException
+     */
     public boolean takeStep(Direction direction) throws IOException {
         TerminalRectangle oldPosition = map.getPlayer().getPosition();
         switch (direction) {
@@ -108,6 +115,11 @@ public class Game {
         return false;
     }
     
+    /**
+     * Makes a move for the player
+     *
+     * @param direction - step direction
+     */
     private void step(Direction direction) {
         TerminalRectangle newPositionBasedOnDirection =
             getNewPositionBasedOnDirection(map.getPlayer().getPosition(), direction);
@@ -120,6 +132,13 @@ public class Game {
         }
     }
     
+    /**
+     * Calculates the following position according to the direction indicated
+     *
+     * @param oldPosition - position to be calculated for
+     * @param direction - step direction
+     * @return
+     */
     private TerminalRectangle getNewPositionBasedOnDirection(TerminalRectangle oldPosition,
                                                              Direction direction) {
         switch (direction) {
@@ -143,26 +162,56 @@ public class Game {
         }
     }
     
+    /**
+     * Changes the position of the GameObject
+     *
+     * @param gameObject - object that needs to change position
+     * @param newPosition - new object position
+     */
     private void changePosition(GameObject gameObject, TerminalRectangle newPosition) {
         if(!isWall(newPosition)) {
             gameObject.setPosition(newPosition);
         }
     }
     
+    /**
+     * Checks if any object from the list is at the specified position
+     *
+     * @param list - list of objects to be checked
+     * @param position - test position
+     * @return true - if at least one of the objects from the list is located (crosses)
+     * the passed position, false - otherwise
+     */
     private boolean isGameObjectInCell(List<? extends GameObject> list, TerminalRectangle position) {
         return list.stream().anyMatch((x) -> isBetween(x.getPosition().x, position.x,
             x.getPosition().xAndWidth) && isBetween(x.getPosition().y, position.y,
             x.getPosition().yAndHeight));
     }
     
+    /**
+     * Checks if the wall is in the specified position
+     * @param position - test position
+     * @return true - if there is a wall in the specified position (crosses it), false - otherwise
+     */
     private boolean isWall(TerminalRectangle position) {
         return isGameObjectInCell(map.getWalls(), position);
     }
     
+    /**
+     * Checks if the box is in the specified position
+     * @param position - test position
+     * @return true - if there is a box in the specified position, false - otherwise
+     */
     private boolean isBox(TerminalRectangle position) {
         return isGameObjectInCell(map.getBoxes(), position);
     }
     
+    /**
+     * Checks if the endpoint is in the specified position
+     * @param position - test position
+     * @return true - if there is a endpoint in the specified position, false -
+     * otherwise
+     */
     private boolean isEndpoint(TerminalRectangle position) {
         return isGameObjectInCell(map.getEndpoints(), position);
     }
@@ -174,6 +223,12 @@ public class Game {
         return left <= value && right > value;
     }
     
+    /**
+     * Updates the map coordinates according to the shift to centre the map
+     *
+     * @param rowShift - shift size
+     * @param columnShift - shift size
+     */
     private void updateMapWithShift(int rowShift, int columnShift) {
         updateGameObjectPositionWithShift(map.getWalls(), rowShift, columnShift);
         updateGameObjectPositionWithShift(map.getBoxes(), rowShift, columnShift);
@@ -182,6 +237,12 @@ public class Game {
             columnShift);
     }
     
+    /**
+     * Updates the GameObjects coordinates according to the shift to centre it
+     * @param list - list of objects to update coordinates
+     * @param rowShift - shift size
+     * @param columnShift - shift size
+     */
     private void updateGameObjectPositionWithShift(List<? extends GameObject> list, int rowShift,
                                                    int columnShift) {
         list.stream().forEach((x) -> {
@@ -192,6 +253,13 @@ public class Game {
         });
     }
     
+    /**
+     * Moves the box according to the direction
+     *
+     * @param position - drawer position
+     * @param direction - direction of movement
+     * @return true - if the box was moved, false - otherwise
+     */
     private boolean moveBox(TerminalRectangle position, Direction direction) {
         TerminalRectangle newPositionBasedOnDirection =
             getNewPositionBasedOnDirection(position, direction);

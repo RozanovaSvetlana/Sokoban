@@ -46,6 +46,12 @@ public class FileUtils {
         return Files.readAllLines(Path.of(fileName)).stream().collect(Collectors.joining("\n"));
     }
     
+    /**
+     * Returns the name of the file at the specified path
+     *
+     * @param file - file path
+     * @return
+     */
     public String getFileName(String file) {
         return Paths.get(file).getFileName().toString();
     }

@@ -57,12 +57,20 @@ public class GameWindow extends WindowImpl {
         //вывод справки
     }
     
+    /**
+     * Redraws the number of steps
+     *
+     * @param amount - new number of steps
+     */
     public void updateNumberSteps(int amount) {
         String strAmount = Integer.toString(amount);
         screenPrinting.printString(columnSize - steps.length() - strAmount.length() - 1,
             2, steps + strAmount);
     }
     
+    /**
+     * Prints the map
+     */
     private void printMap() {
         printListGameObjects(map.getWalls());
         printListGameObjects(map.getBoxes());
@@ -70,10 +78,18 @@ public class GameWindow extends WindowImpl {
         map.getPlayer().print(screenPrinting);
     }
     
+    /**
+     * Prints the list of GameObjects
+     * @param gameObjects - printable list
+     */
     private void printListGameObjects(List<? extends GameObject> gameObjects) {
         gameObjects.forEach(this::printGameObject);
     }
     
+    /**
+     * Prints GameObject
+     * @param object - printable object
+     */
     private void printGameObject(GameObject object) {
         object.print(screenPrinting);
     }
@@ -93,17 +109,31 @@ public class GameWindow extends WindowImpl {
         }
     }
     
+    /**
+     * Erases the player in the old position and draws in the new position
+     *
+     * @param oldPosition - wiping position
+     * @throws IOException
+     */
     public void reprintPlayer(TerminalRectangle oldPosition) throws IOException {
         screenPrinting.wipeOut(oldPosition);
         screenPrinting.refreshScreen();
         printGameObject(map.getPlayer());
     }
     
+    /**
+     * Prints the end point at the specified position (if it exists on the map)
+     * @param position - print position
+     */
     public void printEndpointOnPosition(TerminalRectangle position) {
         map.getEndpoints().stream().filter((x) -> x.getPosition().equals(position)).findFirst()
             .ifPresent((x) -> x.print(screenPrinting));
     }
     
+    /**
+     * Prints a box
+     * @param box - print box object
+     */
     public void printBox(Box box) {
         box.print(screenPrinting);
     }
@@ -116,12 +146,18 @@ public class GameWindow extends WindowImpl {
         screenPrinting.closeTerminal();
     }
     
+    /**
+     * Draws a victory notice
+     */
     public void setWin() {
         task.ifPresent(TimerTask::cancel);
         timerForPrintTime.ifPresent(Timer::cancel);
         screenPrinting.printString((columnSize - win.length()) / 2, rowsSize - 2, win);
     }
     
+    /**
+     * Background shuffle for printing the time display
+     */
     private class PrintTime extends TimerTask {
         
         @Override

@@ -4,6 +4,10 @@ import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Class for converting a map to json and vice versa
+ */
+
 @Getter
 @Setter
 public class JsonMap {

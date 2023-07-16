@@ -18,6 +18,11 @@ public class Controller {
         this.fileName = fileName;
     }
     
+    /**
+     * Runs and controls the game
+     *
+     * @throws IOException
+     */
     public void play() throws IOException {
         if(startGame()) {
             gameLogic.toGameWindow(fileName);
@@ -80,6 +85,12 @@ public class Controller {
         }
     }
     
+    /**
+     * Starts and handles interaction with the logo window
+     * @return true - if it is necessary to start the game,
+     * false - if it is necessary to close the game
+     * @throws IOException
+     */
     private boolean startGame() throws IOException {
         gameLogic.toLogoWindow();
         while (true) {
@@ -97,6 +108,13 @@ public class Controller {
         }
     }
     
+    /**
+     * Makes a move and handles the end of the game
+     *
+     * @param direction - direction of movement
+     * @return true - if the game ended after the step, false - otherwise
+     * @throws IOException
+     */
     private boolean takeStep(Direction direction) throws IOException {
         if(gameLogic.takeStep(direction)) {
             while (true) {

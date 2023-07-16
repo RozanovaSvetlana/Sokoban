@@ -63,10 +63,21 @@ public class PrintAndManage {
         screen.clear();
     }
     
+    /**
+     * Returns the pressed button
+     *
+     * @return KeyStroke
+     * @throws IOException
+     */
     public KeyStroke getKeyPressed() throws IOException {
         return screen.readInput();
     }
     
+    /**
+     * Closes the terminal
+     *
+     * @throws IOException
+     */
     public void closeTerminal() throws IOException {
         terminal.close();
     }
@@ -91,10 +102,22 @@ public class PrintAndManage {
         textGraphics.fillRectangle(position.position, position.size, SPACE);
     }
     
+    /**
+     * Fills the rectangle with the passed character
+     *
+     * @param position - filling rectangle
+     * @param character - fill-in symbol
+     */
     public void drawRectangle(TerminalRectangle position, TextCharacter character) {
         textGraphics.drawRectangle(position.position, position.size, character);
     }
     
+    /**
+     * Draws objects consisting of 4 different characters
+     *
+     * @param position - drawing aid
+     * @param character - character set
+     */
     public void drawSpecialObject(TerminalRectangle position, TextCharacter[] character) {
         textGraphics.setCharacter(position.x, position.y, character[0]);
         textGraphics.setCharacter(position.x + 1, position.y, character[1]);

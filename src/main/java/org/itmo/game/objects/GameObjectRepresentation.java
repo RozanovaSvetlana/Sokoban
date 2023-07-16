@@ -10,5 +10,11 @@ public interface GameObjectRepresentation {
      * @return TextCharacter
      */
     TextCharacter[] getRepresentation();
+    
+    /**
+     * Print object
+     *
+     * @param printAndManage - for print
+     */
     void print(PrintAndManage printAndManage);
 }

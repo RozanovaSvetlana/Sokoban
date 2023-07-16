@@ -6,6 +6,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Class for converting GameObject to json and vice versa
+ */
+
 @Getter
 @Setter
 @NoArgsConstructor
