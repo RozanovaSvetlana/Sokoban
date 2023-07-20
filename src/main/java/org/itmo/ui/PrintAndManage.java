@@ -1,6 +1,6 @@
 package org.itmo.ui;
 
-import static org.itmo.game.Symbols.SPACE;
+import static org.itmo.ui.Symbols.SPACE;
 
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalRectangle;
@@ -11,7 +11,6 @@ import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.Terminal;
 import java.io.IOException;
 import lombok.Getter;
-import org.itmo.game.Symbols;
 
 public class PrintAndManage {
     

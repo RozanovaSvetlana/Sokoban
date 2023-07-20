@@ -1,76 +1,29 @@
 package org.itmo.game.logic;
 
-import static java.lang.Math.max;
 import static org.itmo.game.logic.Direction.DOWN;
 import static org.itmo.game.logic.Direction.LEFT;
 import static org.itmo.game.logic.Direction.RIGHT;
 import static org.itmo.game.logic.Direction.UP;
 
-import com.googlecode.lanterna.TerminalRectangle;
-import com.googlecode.lanterna.input.KeyStroke;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
+import lombok.Getter;
 import org.itmo.game.map.Map;
 import org.itmo.game.objects.Box;
 import org.itmo.game.objects.GameObject;
-import org.itmo.ui.windows.GameWindow;
-import org.itmo.ui.windows.LogoWindow;
-import org.itmo.ui.windows.WindowImpl;
-import org.itmo.utils.FileUtils;
+import org.itmo.game.objects.Position;
 
 public class Game {
     
     Map map;
     int numberOccupiedEndpoints = 0;
+    
+    @Getter
     int numberStep = 0;
-    WindowImpl currentWindow;
-    GameWindow window;
     
-    /**
-     * Launches the logo window
-     * @throws IOException
-     */
-    public void toLogoWindow() throws IOException {
-        currentWindow = new LogoWindow();
-        currentWindow.clearScreen();
-        currentWindow.play();
-    }
-    
-    /**
-     * Launches the game window
-     *
-     * @param fileName - map file name
-     * @throws IOException
-     */
-    public void toGameWindow(String fileName) throws IOException {
+    public Map setMap(String fileName) {
         map = Map.builder().setFileName(fileName).build();
-        String name = FileUtils.getFileName(fileName);
-        currentWindow = new GameWindow(max(map.getWidth() + 2, GameWindow.minColumnSize + name.length()),
-            map.getHeight() + GameWindow.minRowSize, name, map);
-        updateMapWithShift(GameWindow.getRowShift(), GameWindow.getColumnShift());
-        currentWindow.clearScreen();
-        currentWindow.play();
-        window = (GameWindow) currentWindow;
-    }
-    
-    /**
-     * Returns the pressed key
-     *
-     * @return KeyStroke
-     * @throws IOException
-     */
-    public KeyStroke getKeyPressed() throws IOException {
-        return currentWindow.getKeyPressed();
-    }
-    
-    /**
-     * Close terminal
-     *
-     * @throws IOException
-     */
-    public void closeWindow() throws IOException {
-        currentWindow.closeTerminal();
+        return map;
     }
     
     /**
@@ -81,37 +34,27 @@ public class Game {
      * @throws IOException
      */
     public boolean takeStep(Direction direction) throws IOException {
-        TerminalRectangle oldPosition = map.getPlayer().getPosition();
+        Position oldPosition = new Position(map.getPlayer().getRectangle().getPosition());
         switch (direction) {
             case UP -> {
-                map.getPlayer().setStraight();
                 step(UP);
             }
             case DOWN -> {
-                map.getPlayer().setStraight();
                 step(DOWN);
             }
             case LEFT -> {
-                map.getPlayer().setLeftTurn();
                 step(LEFT);
             }
             case RIGHT -> {
-                map.getPlayer().setRightTurn();
                 step(RIGHT);
             }
         }
-        window.reprintPlayer(oldPosition);
-        if(!oldPosition.equals(map.getPlayer().getPosition())) {
-            window.printEndpointOnPosition(oldPosition);
+        if(!oldPosition.equals(map.getPlayer().getRectangle().getPosition())) {
             numberStep++;
-            window.updateNumberSteps(numberStep);
         }
         if(numberOccupiedEndpoints == map.getEndpoints().size()) {
-            window.setWin();
-            window.refreshScreen();
             return true;
         }
-        window.refreshScreen();
         return false;
     }
     
@@ -121,8 +64,8 @@ public class Game {
      * @param direction - step direction
      */
     private void step(Direction direction) {
-        TerminalRectangle newPositionBasedOnDirection =
-            getNewPositionBasedOnDirection(map.getPlayer().getPosition(), direction);
+        Position newPositionBasedOnDirection =
+            getNewPositionBasedOnDirection(map.getPlayer().getRectangle().getPosition(), direction);
         if(isBox(newPositionBasedOnDirection)) {
             if(moveBox(newPositionBasedOnDirection, direction)) {
                 changePosition(map.getPlayer(), newPositionBasedOnDirection);
@@ -139,24 +82,20 @@ public class Game {
      * @param direction - step direction
      * @return
      */
-    private TerminalRectangle getNewPositionBasedOnDirection(TerminalRectangle oldPosition,
-                                                             Direction direction) {
+    private Position getNewPositionBasedOnDirection(Position oldPosition,
+                                                     Direction direction) {
         switch (direction) {
             case DOWN -> {
-                return new TerminalRectangle(oldPosition.x, oldPosition.y + 2, oldPosition.width,
-                    oldPosition.height);
+                return new Position(oldPosition.getX(), oldPosition.getY() + 1);
             }
             case UP -> {
-                return new TerminalRectangle(oldPosition.x, oldPosition.y - 2, oldPosition.width,
-                    oldPosition.height);
+                return new Position(oldPosition.getX(), oldPosition.getY() - 1);
             }
             case LEFT -> {
-                return new TerminalRectangle(oldPosition.x - 2, oldPosition.y, oldPosition.width,
-                    oldPosition.height);
+                return new Position(oldPosition.getX() - 1, oldPosition.getY());
             }
             case RIGHT -> {
-                return new TerminalRectangle(oldPosition.x + 2, oldPosition.y, oldPosition.width,
-                    oldPosition.height);
+                return new Position(oldPosition.getX() + 1, oldPosition.getY());
             }
             default -> throw new RuntimeException();
         }
@@ -168,9 +107,11 @@ public class Game {
      * @param gameObject - object that needs to change position
      * @param newPosition - new object position
      */
-    private void changePosition(GameObject gameObject, TerminalRectangle newPosition) {
+    private void changePosition(GameObject gameObject, Position newPosition) {
         if(!isWall(newPosition)) {
-            gameObject.setPosition(newPosition);
+            Position position = gameObject.getRectangle().getPosition();
+            position.setX(newPosition.getX());
+            position.setY(newPosition.getY());
         }
     }
     
@@ -182,10 +123,12 @@ public class Game {
      * @return true - if at least one of the objects from the list is located (crosses)
      * the passed position, false - otherwise
      */
-    private boolean isGameObjectInCell(List<? extends GameObject> list, TerminalRectangle position) {
-        return list.stream().anyMatch((x) -> isBetween(x.getPosition().x, position.x,
-            x.getPosition().xAndWidth) && isBetween(x.getPosition().y, position.y,
-            x.getPosition().yAndHeight));
+    private boolean isGameObjectInCell(List<? extends GameObject> list, Position position) {
+        return list.stream().anyMatch((x) -> isBetween(x.getRectangle().getPosition().getX(),
+            position.getX(),
+            x.getRectangle().XAndWidth()) && isBetween(x.getRectangle().getPosition().getY(),
+            position.getY(),
+            x.getRectangle().YAndHeight()));
     }
     
     /**
@@ -193,7 +136,7 @@ public class Game {
      * @param position - test position
      * @return true - if there is a wall in the specified position (crosses it), false - otherwise
      */
-    private boolean isWall(TerminalRectangle position) {
+    private boolean isWall(Position position) {
         return isGameObjectInCell(map.getWalls(), position);
     }
     
@@ -202,7 +145,7 @@ public class Game {
      * @param position - test position
      * @return true - if there is a box in the specified position, false - otherwise
      */
-    private boolean isBox(TerminalRectangle position) {
+    private boolean isBox(Position position) {
         return isGameObjectInCell(map.getBoxes(), position);
     }
     
@@ -212,7 +155,7 @@ public class Game {
      * @return true - if there is a endpoint in the specified position, false -
      * otherwise
      */
-    private boolean isEndpoint(TerminalRectangle position) {
+    private boolean isEndpoint(Position position) {
         return isGameObjectInCell(map.getEndpoints(), position);
     }
     
@@ -224,58 +167,26 @@ public class Game {
     }
     
     /**
-     * Updates the map coordinates according to the shift to centre the map
-     *
-     * @param rowShift - shift size
-     * @param columnShift - shift size
-     */
-    private void updateMapWithShift(int rowShift, int columnShift) {
-        updateGameObjectPositionWithShift(map.getWalls(), rowShift, columnShift);
-        updateGameObjectPositionWithShift(map.getBoxes(), rowShift, columnShift);
-        updateGameObjectPositionWithShift(map.getEndpoints(), rowShift, columnShift);
-        updateGameObjectPositionWithShift(Collections.singletonList(map.getPlayer()), rowShift,
-            columnShift);
-    }
-    
-    /**
-     * Updates the GameObjects coordinates according to the shift to centre it
-     * @param list - list of objects to update coordinates
-     * @param rowShift - shift size
-     * @param columnShift - shift size
-     */
-    private void updateGameObjectPositionWithShift(List<? extends GameObject> list, int rowShift,
-                                                   int columnShift) {
-        list.stream().forEach((x) -> {
-            TerminalRectangle position = x.getPosition();
-            x.setPosition(
-                new TerminalRectangle(position.x + columnShift, position.y + rowShift,
-                    position.width, position.height));
-        });
-    }
-    
-    /**
      * Moves the box according to the direction
      *
      * @param position - drawer position
+     *
      * @param direction - direction of movement
      * @return true - if the box was moved, false - otherwise
      */
-    private boolean moveBox(TerminalRectangle position, Direction direction) {
-        TerminalRectangle newPositionBasedOnDirection =
+    private boolean moveBox(Position position, Direction direction) {
+        Position newRectangleBasedOnDirection =
             getNewPositionBasedOnDirection(position, direction);
-        if(!isWall(newPositionBasedOnDirection) && !isBox(newPositionBasedOnDirection)) {
-            Box box = map.getBoxes().stream().filter((x) -> x.getPosition().equals(position))
-                .findFirst().get();
-            if(isEndpoint(box.getPosition())) {
-                box.setNotEndpointBox();
+        if(!isWall(newRectangleBasedOnDirection) && !isBox(newRectangleBasedOnDirection)) {
+            Box box = map.getBoxes().stream().filter((x) -> x.getRectangle().getPosition()
+                    .equals(position)).findFirst().get();
+            if(isEndpoint(box.getRectangle().getPosition())) {
                 numberOccupiedEndpoints--;
             }
-            changePosition(box, newPositionBasedOnDirection);
-            if(isEndpoint(newPositionBasedOnDirection)) {
-                box.setEndpointBox();
+            changePosition(box, newRectangleBasedOnDirection);
+            if(isEndpoint(newRectangleBasedOnDirection)) {
                 numberOccupiedEndpoints++;
             }
-            window.printBox(box);
             return true;
         }
         return false;

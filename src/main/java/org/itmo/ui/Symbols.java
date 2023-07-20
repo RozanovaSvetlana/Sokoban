@@ -1,4 +1,4 @@
-package org.itmo.game;
+package org.itmo.ui;
 
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TextColor;

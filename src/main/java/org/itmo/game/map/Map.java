@@ -4,8 +4,6 @@ import static java.lang.Math.max;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.TerminalRectangle;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -20,7 +18,8 @@ import org.itmo.game.objects.Player;
 import org.itmo.game.objects.Wall;
 import org.itmo.game.objects.WallsLoader;
 import org.itmo.game.objects.jsonObjects.JsonMap;
-import org.itmo.game.objects.jsonObjects.JsonObject;
+import org.itmo.game.objects.Position;
+import org.itmo.game.objects.Rectangle;
 import org.itmo.utils.FileUtils;
 
 @Getter
@@ -54,15 +53,12 @@ public class Map {
      * @param jsonMap - map description in jsonMap format
      */
     private void fromJsonMapToMap(JsonMap jsonMap) {
-        width = jsonMap.getWidth() * 2;
-        height = jsonMap.getHeight() * 2;
-        jsonMap.getWalls().stream().map((x) -> new Wall(x.terminalRectanglePosition()))
-            .forEach(walls::add);
-        jsonMap.getBoxes().stream().map((x) -> new Box(x.terminalRectanglePosition()))
-            .forEach(boxes::add);
-        jsonMap.getEndpoints().stream().map((x) -> new Endpoint(x.terminalRectanglePosition()))
-            .forEach(endpoints::add);
-        player = new Player(jsonMap.getPlayer().terminalRectanglePosition());
+        width = jsonMap.getWidth();
+        height = jsonMap.getHeight();
+        jsonMap.getWalls().stream().map(Wall::new).forEach(walls::add);
+        jsonMap.getBoxes().stream().map(Box::new).forEach(boxes::add);
+        jsonMap.getEndpoints().stream().map(Endpoint::new).forEach(endpoints::add);
+        player = new Player(jsonMap.getPlayer());
     }
     
     /**
@@ -81,8 +77,8 @@ public class Map {
      */
     private JsonMap fromMapToJsonMap() {
         JsonMap jsonMap = new JsonMap();
-        jsonMap.setWidth(width / 2);
-        jsonMap.setHeight(height / 2);
+        jsonMap.setWidth(width);
+        jsonMap.setHeight(height);
         jsonMap.setEndpoints(gameObjectListToJsonObjectList(endpoints));
         jsonMap.setBoxes(gameObjectListToJsonObjectList(boxes));
         jsonMap.setWalls(gameObjectListToJsonObjectList(walls));
@@ -96,7 +92,7 @@ public class Map {
      * @param objects - conversion objects
      * @return description of GameObjects in JsonObjects format
      */
-    private List<JsonObject> gameObjectListToJsonObjectList(List<? extends GameObject> objects) {
+    private List<Rectangle> gameObjectListToJsonObjectList(List<? extends GameObject> objects) {
         return objects.stream().map(this::gameObjectToJsonObject).collect(Collectors.toList());
     }
     
@@ -105,10 +101,8 @@ public class Map {
      * @param object - conversion object
      * @return description of GameObject in JsonObject format
      */
-    private JsonObject gameObjectToJsonObject(GameObject object) {
-        TerminalRectangle position = object.getPosition();
-        return new JsonObject(position.x / 2, position.y / 2, position.width / 2,
-            position.height / 2);
+    private Rectangle gameObjectToJsonObject(GameObject object) {
+        return new Rectangle(object.getRectangle());
     }
     
     public static class MapBuilder {
@@ -168,15 +162,15 @@ public class Map {
                         String line = reader.readLine();
                         mp.width = max(mp.width, line.trim().length());
                         addGameObjectFromString(wallsLoader, mp, line);
-                        mp.height += 2;
+                        mp.height += 1;
                     }
                     mp.walls = wallsLoader.getWalls().entrySet().stream().map(entry -> {
-                        TerminalPosition wallStart = entry.getValue();
-                        TerminalPosition wallEnd = entry.getKey();
-                        int width = Math.abs(wallStart.getColumn() - wallEnd.getColumn()) + 2;
-                        int height = Math.abs(wallStart.getRow() - wallEnd.getRow()) + 2;
+                        Position wallStart = entry.getValue();
+                        Position wallEnd = entry.getKey();
+                        int width = Math.abs(wallStart.getX() - wallEnd.getX()) + 1;
+                        int height = Math.abs(wallStart.getY() - wallEnd.getY()) + 1;
                         return new Wall(
-                            new TerminalRectangle(wallStart.getColumn(), wallStart.getRow(), width,
+                            new Rectangle(wallStart.getX(), wallStart.getY(), width,
                                 height));
                     }).collect(Collectors.toList());
                     return mp;
@@ -198,20 +192,17 @@ public class Map {
                 getAllIndexGameObjectInString(line, '+');
             if(!gameObjectInString.isEmpty()) {
                 mp.player = new Player(
-                    new TerminalRectangle(gameObjectInString.get(0) * 2,
-                        mp.height, 2, 2));
+                    new Rectangle(gameObjectInString.get(0), mp.height, 1, 1));
             }
             gameObjectInString = getAllIndexGameObjectInString(line, 'x');
             if(!gameObjectInString.isEmpty()) {
                 gameObjectInString.forEach((x) -> mp.getBoxes()
-                    .add(new Box(
-                        new TerminalRectangle(x * 2, mp.height, 2, 2))));
+                    .add(new Box(new Rectangle(x, mp.height, 1, 1))));
             }
             gameObjectInString = getAllIndexGameObjectInString(line, '.');
             if(!gameObjectInString.isEmpty()) {
                 gameObjectInString.forEach((x) -> mp.getEndpoints()
-                    .add(new Endpoint(
-                        new TerminalRectangle(x * 2, mp.height, 2, 2))));
+                    .add(new Endpoint(new Rectangle(x, mp.height, 1, 1))));
             }
             addWalls(mp.height, wallsLoader, line);
         }
@@ -242,9 +233,8 @@ public class Map {
         private void addWalls(int height, WallsLoader wallsLoader, String line) {
             for (int i = 0; i < line.length(); i++) {
                 if (line.charAt(i) == '@') {
-                    TerminalRectangle position = new TerminalRectangle(i * 2,
-                        height, 2, 2);
-                    wallsLoader.getWalls(position, i * 2, height);
+                    Position position = new Position(i, height);
+                    wallsLoader.getWalls(position, i, height);
                 }
             }
         }

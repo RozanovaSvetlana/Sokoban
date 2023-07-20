@@ -1,10 +1,15 @@
 package org.itmo.game;
 
+import static org.itmo.game.logic.Direction.DOWN;
+import static org.itmo.game.logic.Direction.LEFT;
+import static org.itmo.game.logic.Direction.RIGHT;
+import static org.itmo.game.logic.Direction.UP;
+
 import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.input.KeyType;
 import java.io.IOException;
 import org.itmo.game.logic.Direction;
 import org.itmo.game.logic.Game;
+import org.itmo.ui.GameEngine;
 
 /**
  * A class that responds to the user's click in an appropriate way
@@ -12,6 +17,7 @@ import org.itmo.game.logic.Game;
 public class Controller {
     
     private static final Game gameLogic = new Game();
+    private static final GameEngine gameEngine = new GameEngine();
     private String fileName;
     
     public Controller(String fileName) {
@@ -25,57 +31,65 @@ public class Controller {
      */
     public void play() throws IOException {
         if(startGame()) {
-            gameLogic.toGameWindow(fileName);
+            gameEngine.toGameWindow(gameLogic.setMap(fileName), fileName);
             while (true) {
-                KeyStroke input = gameLogic.getKeyPressed();
+                KeyStroke input = gameEngine.getKeyPressed();
                 if(input != null) {
                     switch (input.getKeyType()) {
                         case ArrowUp -> {
-                            if(takeStep(Direction.UP)) {
+                            if(takeStep(UP, gameEngine)) {
                                 return;
                             }
+                            gameEngine.printMap(gameLogic.getNumberStep(), UP);
                         }
                         case ArrowRight -> {
-                            if(takeStep(Direction.RIGHT)) {
+                            if(takeStep(RIGHT, gameEngine)) {
                                 return;
                             }
+                            gameEngine.printMap(gameLogic.getNumberStep(), RIGHT);
                         }
                         case ArrowDown -> {
-                            if(takeStep(Direction.DOWN)) {
+                            if(takeStep(DOWN, gameEngine)) {
                                 return;
                             }
+                            gameEngine.printMap(gameLogic.getNumberStep(), DOWN);
                         }
                         case ArrowLeft -> {
-                            if(takeStep(Direction.LEFT)) {
+                            if(takeStep(LEFT, gameEngine)) {
                                 return;
                             }
+                            gameEngine.printMap(gameLogic.getNumberStep(), LEFT);
                         }
                         case Escape -> {
-                            gameLogic.closeWindow();
+                            gameEngine.closeWindow();
                             return;
                         }
                         case Character -> {
                             Character key = input.getCharacter();
                             switch (key) {
                                 case 'w', 'ц' -> {
-                                    if(takeStep(Direction.UP)) {
+                                    if(takeStep(UP, gameEngine)) {
                                         return;
                                     }
+                                    gameEngine.printMap(gameLogic.getNumberStep(), UP);
                                 }
                                 case 'd', 'в' -> {
-                                    if(takeStep(Direction.RIGHT)) {
+                                    if(takeStep(RIGHT, gameEngine)) {
                                         return;
                                     }
+                                    gameEngine.printMap(gameLogic.getNumberStep(), RIGHT);
                                 }
                                 case 's', 'ы' -> {
-                                    if(takeStep(Direction.DOWN)) {
+                                    if(takeStep(DOWN, gameEngine)) {
                                         return;
                                     }
+                                    gameEngine.printMap(gameLogic.getNumberStep(), DOWN);
                                 }
                                 case 'a', 'ф' -> {
-                                    if(takeStep(Direction.LEFT)) {
+                                    if(takeStep(LEFT, gameEngine)) {
                                         return;
                                     }
+                                    gameEngine.printMap(gameLogic.getNumberStep(), LEFT);
                                 }
                             }
                         }
@@ -92,16 +106,16 @@ public class Controller {
      * @throws IOException
      */
     private boolean startGame() throws IOException {
-        gameLogic.toLogoWindow();
+        gameEngine.toLogoWindow();
         while (true) {
-            KeyStroke input = gameLogic.getKeyPressed();
+            KeyStroke input = gameEngine.getKeyPressed();
             switch (input.getKeyType()) {
                 case Enter -> {
-                    gameLogic.closeWindow();
+                    gameEngine.closeWindow();
                     return true;
                 }
                 case Escape -> {
-                    gameLogic.closeWindow();
+                    gameEngine.closeWindow();
                     return false;
                 }
             }
@@ -115,13 +129,14 @@ public class Controller {
      * @return true - if the game ended after the step, false - otherwise
      * @throws IOException
      */
-    private boolean takeStep(Direction direction) throws IOException {
+    private boolean takeStep(Direction direction, GameEngine gameEngine) throws IOException {
         if(gameLogic.takeStep(direction)) {
+            gameEngine.setWin(gameLogic.getNumberStep(), direction);
             while (true) {
-                KeyStroke input = gameLogic.getKeyPressed();
+                KeyStroke input = gameEngine.getKeyPressed();
                 switch (input.getKeyType()) {
                     case Enter, Escape -> {
-                        gameLogic.closeWindow();
+                        gameEngine.closeWindow();
                         return true;
                     }
                 }

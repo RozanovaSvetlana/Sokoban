@@ -6,13 +6,18 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.stream.Collectors;
 import lombok.Getter;
+import org.itmo.game.logic.Direction;
 import org.itmo.game.map.Map;
-import org.itmo.game.objects.Box;
-import org.itmo.game.objects.GameObject;
+import org.itmo.ui.view.BoxView;
+import org.itmo.ui.view.GameObjectView;
+import org.itmo.ui.view.MapView;
+import org.itmo.ui.view.PlayerView;
 
 public class GameWindow extends WindowImpl {
-    Map map;
+    private MapView map;
+    private List<TerminalRectangle> endpointPositions;
     private static String steps = "Steps: ";
     private static String time = "Time: ";
     private static String fileName = "Name: ";
@@ -23,10 +28,11 @@ public class GameWindow extends WindowImpl {
      * one on the right. Eight characters for time and ten spaces between entries.
      */
     public static final int minColumnSize = fileName.length() + time.length() + 20;
+    public static final int winLength = win.length();
     public static final int minRowSize = 7;
     
     @Getter
-    private static final int rowShift = 4;
+    private static final int rowShift = 5;
     
     @Getter
     private static int columnShift = 1;
@@ -38,22 +44,24 @@ public class GameWindow extends WindowImpl {
     
     public GameWindow(int columnSize, int rowSize, String fileName, Map map) {
         super(columnSize, rowSize);
-        this.map = map;
-        if (map.getWidth() + 2 < columnSize) {
-            columnShift = (columnSize - map.getWidth()) / 2;
+        if (map.getWidth() * 2 + 2 < columnSize) {
+            columnShift = (columnSize - map.getWidth() * 2) / 2;
         }
+        this.map = new MapView(map, rowShift, columnShift);
         this.fileName += fileName;
+        endpointPositions =
+            this.map.getEndpoints().stream().map(GameObjectView::getTerminalRectangle).collect(
+            Collectors.toList());
     }
     
     @Override
     public void play() throws IOException {
         screenPrinting.printString(0, 1, fileName);
-        updateNumberSteps(0);
         refreshScreen();
         timerForPrintTime = Optional.of(new Timer());
         task = Optional.of(new PrintTime());
         timerForPrintTime.get().schedule(task.get(), 0, 1000);
-        printMap();
+        printMap(0, null);
         //вывод справки
     }
     
@@ -71,26 +79,65 @@ public class GameWindow extends WindowImpl {
     /**
      * Prints the map
      */
-    private void printMap() {
+    public void printMap(int numberStep, Direction direction) {
+        screenPrinting.wipeOut(new TerminalRectangle(columnShift, rowShift, map.getWidth(),
+            map.getHeight()));
         printListGameObjects(map.getWalls());
-        printListGameObjects(map.getBoxes());
         printListGameObjects(map.getEndpoints());
+        updateViewBox();
+        printListGameObjects(map.getBoxes());
+        updatePlayerView(direction);
         map.getPlayer().print(screenPrinting);
+        updateNumberSteps(numberStep);
     }
     
     /**
      * Prints the list of GameObjects
      * @param gameObjects - printable list
      */
-    private void printListGameObjects(List<? extends GameObject> gameObjects) {
+    private void printListGameObjects(List<? extends GameObjectView> gameObjects) {
         gameObjects.forEach(this::printGameObject);
+    }
+    
+    /**
+     * Updates the boxes view depending on whether they are on the endpoint or not
+     */
+    private void updateViewBox() {
+        map.getBoxes().stream().filter((x) -> isEndpoint(x.getTerminalRectangle()))
+            .forEach((x) -> ((BoxView) x).setEndpointBox());
+        map.getBoxes().stream().filter((x) -> !isEndpoint(x.getTerminalRectangle()))
+            .forEach((x) -> ((BoxView) x).setNotEndpointBox());
+    }
+    
+    /**
+     * Updates the player's appearance depending on the direction of movement
+     * @param direction
+     */
+    private void updatePlayerView(Direction direction) {
+        if (direction != null) {
+            switch (direction) {
+                case RIGHT -> ((PlayerView) map.getPlayer()).setRightTurn();
+                case LEFT -> ((PlayerView) map.getPlayer()).setLeftTurn();
+                case UP, DOWN -> ((PlayerView) map.getPlayer()).setStraight();
+            }
+        }
+    }
+    
+    /**
+     * Checks if the endpoint is in the specified position
+     * @param position - test position
+     * @return true - if there is a endpoint in the specified position, false -
+     * otherwise
+     */
+    private boolean isEndpoint(TerminalRectangle position) {
+        return endpointPositions.contains(position);
     }
     
     /**
      * Prints GameObject
      * @param object - printable object
      */
-    private void printGameObject(GameObject object) {
+    private void printGameObject(GameObjectView object) {
         object.print(screenPrinting);
     }
     
@@ -107,35 +154,6 @@ public class GameWindow extends WindowImpl {
             hours += minutes / 60;
             minutes = minutes % 60;
         }
-    }
-    
-    /**
-     * Erases the player in the old position and draws in the new position
-     *
-     * @param oldPosition - wiping position
-     * @throws IOException
-     */
-    public void reprintPlayer(TerminalRectangle oldPosition) throws IOException {
-        screenPrinting.wipeOut(oldPosition);
-        screenPrinting.refreshScreen();
-        printGameObject(map.getPlayer());
-    }
-    
-    /**
-     * Prints the end point at the specified position (if it exists on the map)
-     * @param position - print position
-     */
-    public void printEndpointOnPosition(TerminalRectangle position) {
-        map.getEndpoints().stream().filter((x) -> x.getPosition().equals(position)).findFirst()
-            .ifPresent((x) -> x.print(screenPrinting));
-    }
-    
-    /**
-     * Prints a box
-     * @param box - print box object
-     */
-    public void printBox(Box box) {
-        box.print(screenPrinting);
     }
     
     @Override
