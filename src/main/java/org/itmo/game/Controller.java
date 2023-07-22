@@ -106,6 +106,16 @@ public class Controller {
         }
     }
     
+    /**
+     * Seeks a solution for the transferred card
+     *
+     * @param isWriteToFile - if true - the solution will be written to the file,
+     *                     otherwise - step-by-step display of the solution will be performed
+     * @param fileNameForSolution - filename of the file to record the response
+     *                            (if no recording is required, the argument is ignored)
+     * @throws IOException
+     * @throws InterruptedException
+     */
     public void solve(boolean isWriteToFile, String fileNameForSolution)
         throws IOException, InterruptedException {
         Solver solver = new Solver();
