@@ -9,6 +9,7 @@ import com.googlecode.lanterna.input.KeyStroke;
 import java.io.IOException;
 import org.itmo.game.logic.Direction;
 import org.itmo.game.logic.Game;
+import org.itmo.game.map.Map;
 import org.itmo.ui.GameEngine;
 
 /**
@@ -31,7 +32,8 @@ public class Controller {
      */
     public void play() throws IOException {
         if(startGame()) {
-            gameEngine.toGameWindow(gameLogic.setMap(fileName), fileName);
+            Map map = gameLogic.setMap(fileName);
+            gameEngine.toGameWindow(map, fileName);
             while (true) {
                 KeyStroke input = gameEngine.getKeyPressed();
                 if(input != null) {

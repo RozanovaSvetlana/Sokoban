@@ -47,6 +47,13 @@ public class Map {
         fromJsonMapToMap(map);
     }
     
+    private Map(List<Wall> walls, List<Box> boxes, List<Endpoint> endpoints, Player player) {
+        this.walls = walls;
+        this.boxes = boxes;
+        this.endpoints = endpoints;
+        this.player = player;
+    }
+    
     /**
      * Performs the conversion from jsonMap to a map object
      *
@@ -109,19 +116,58 @@ public class Map {
         
         private String fileName = "";
         private int numberBoxes = 0;
+        private List<Box> boxList;
+        private List<Endpoint> endpointList;
+        private List<Wall> wallList;
+        private Player player;
         
         /**
          * sets the path for the level file
-         * @param fileName
-         * @return
+         * @param fileName - map file
+         * @return MapBuilder
          */
         public MapBuilder setFileName(String fileName) {
             this.fileName = fileName;
             return this;
         }
         
-        public MapBuilder setNumberBoxes(int amount) {
-            this.numberBoxes = amount;
+        /**
+         * sets box list for map
+         * @param boxes - box list
+         * @return MapBuilder
+         */
+        public MapBuilder setBoxes(List<Box> boxes) {
+            boxList = boxes;
+            return this;
+        }
+        
+        /**
+         * sets player for map
+         * @param player - player
+         * @return MapBuilder
+         */
+        public MapBuilder setPlayer(Player player) {
+            this.player = player;
+            return this;
+        }
+        
+        /**
+         * sets endpoint list for map
+         * @param endpoints - endpoint list
+         * @return MapBuilder
+         */
+        public MapBuilder setEndpoint(List<Endpoint> endpoints) {
+            endpointList = endpoints;
+            return this;
+        }
+        
+        /**
+         * sets wall list for map
+         * @param walls - wall list
+         * @return MapBuilder
+         */
+        public MapBuilder setWalls(List<Wall> walls) {
+            wallList = walls;
             return this;
         }
         
@@ -133,8 +179,7 @@ public class Map {
             if (!fileName.equals("")) {
                 return buildFromFile();
             }
-            //TODO
-            return new Map();
+            return new Map(wallList, boxList, endpointList, player);
         }
         
         /**

@@ -21,9 +21,33 @@ public class Game {
     @Getter
     int numberStep = 0;
     
+    /**
+     * Set map from file
+     * @param fileName - map file
+     * @return Map
+     */
     public Map setMap(String fileName) {
         map = Map.builder().setFileName(fileName).build();
+        setNumberOccupiedEndpoints();
         return map;
+    }
+    
+    /**
+     * Set map
+     * @param map - Map
+     */
+    public void setMap(Map map) {
+        this.map = map;
+        setNumberOccupiedEndpoints();
+    }
+    
+    /**
+     * Set number occupied endpoints
+     */
+    private void setNumberOccupiedEndpoints() {
+        numberOccupiedEndpoints = (int) map.getBoxes().stream().filter((x) ->
+            isEndpoint(x.getRectangle()
+            .getPosition())).count();
     }
     
     /**
@@ -52,10 +76,7 @@ public class Game {
         if(!oldPosition.equals(map.getPlayer().getRectangle().getPosition())) {
             numberStep++;
         }
-        if(numberOccupiedEndpoints == map.getEndpoints().size()) {
-            return true;
-        }
-        return false;
+        return isWin();
     }
     
     /**
@@ -63,16 +84,18 @@ public class Game {
      *
      * @param direction - step direction
      */
-    private void step(Direction direction) {
+    public boolean step(Direction direction) {
         Position newPositionBasedOnDirection =
             getNewPositionBasedOnDirection(map.getPlayer().getRectangle().getPosition(), direction);
         if(isBox(newPositionBasedOnDirection)) {
             if(moveBox(newPositionBasedOnDirection, direction)) {
                 changePosition(map.getPlayer(), newPositionBasedOnDirection);
+                return true;
             }
         } else {
-            changePosition(map.getPlayer(), newPositionBasedOnDirection);
+            return changePosition(map.getPlayer(), newPositionBasedOnDirection);
         }
+        return false;
     }
     
     /**
@@ -80,7 +103,7 @@ public class Game {
      *
      * @param oldPosition - position to be calculated for
      * @param direction - step direction
-     * @return
+     * @return new position
      */
     private Position getNewPositionBasedOnDirection(Position oldPosition,
                                                      Direction direction) {
@@ -107,12 +130,14 @@ public class Game {
      * @param gameObject - object that needs to change position
      * @param newPosition - new object position
      */
-    private void changePosition(GameObject gameObject, Position newPosition) {
+    private boolean changePosition(GameObject gameObject, Position newPosition) {
         if(!isWall(newPosition)) {
             Position position = gameObject.getRectangle().getPosition();
             position.setX(newPosition.getX());
             position.setY(newPosition.getY());
+            return true;
         }
+        return false;
     }
     
     /**
@@ -190,6 +215,37 @@ public class Game {
             return true;
         }
         return false;
+    }
+    
+    /**
+     * Checks if the level has been passed
+     * @return true - if the level is passed, false - otherwise
+     */
+    public boolean isWin() {
+        return numberOccupiedEndpoints == map.getEndpoints().size();
+    }
+    
+    /**
+     * Checks if a box exists in a corner and not on an endpoint
+     *
+     * @return true - if exists, false - otherwise
+     */
+    public boolean isExistsBoxNotOnEndpointButInCorner() {
+        return map.getBoxes().stream().filter((x) -> !isEndpoint(x.getRectangle().getPosition()))
+            .anyMatch((x) -> {
+                boolean left = isWall(getNewPositionBasedOnDirection(x.getRectangle().getPosition(),
+                    LEFT));
+                boolean right =
+                    isWall(getNewPositionBasedOnDirection(x.getRectangle().getPosition(),
+                    RIGHT));
+                boolean down =
+                    isWall(getNewPositionBasedOnDirection(x.getRectangle().getPosition(),
+                        DOWN));
+                boolean up =
+                    isWall(getNewPositionBasedOnDirection(x.getRectangle().getPosition(),
+                        UP));
+                return (left && up) || (left && down) || (up && right) || (right && down);
+            });
     }
     
 }

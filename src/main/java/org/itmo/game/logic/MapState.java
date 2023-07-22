@@ -3,11 +3,14 @@ package org.itmo.game.logic;
 import java.util.Objects;
 import java.util.Set;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.itmo.game.objects.Position;
 
 @AllArgsConstructor
 public class MapState {
+    @Getter
     Position playerPosition;
+    @Getter
     Set<Position> boxPositions;
     
     @Override
