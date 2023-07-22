@@ -5,13 +5,17 @@ import static org.itmo.game.logic.Direction.LEFT;
 import static org.itmo.game.logic.Direction.RIGHT;
 import static org.itmo.game.logic.Direction.UP;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import lombok.Getter;
 import org.itmo.game.map.Map;
 import org.itmo.game.objects.Box;
 import org.itmo.game.objects.GameObject;
 import org.itmo.game.objects.Position;
+import org.itmo.utils.FileUtils;
 
 public class Game {
     
@@ -246,6 +250,18 @@ public class Game {
                         UP));
                 return (left && up) || (left && down) || (up && right) || (right && down);
             });
+    }
+    
+    public String writeMapToFile() {
+        String fileNameForCurrentMap = "map_for_solution.json";
+        try (OutputStream fileForWrite = FileUtils.getFileForWrite(fileNameForCurrentMap)) {
+            fileForWrite.write(map.fromMapToJsonString().getBytes(StandardCharsets.UTF_8));
+            return fileNameForCurrentMap;
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
     
 }

@@ -89,6 +89,12 @@ public class GameWindow extends WindowImpl {
         updatePlayerView(direction);
         map.getPlayer().print(screenPrinting);
         updateNumberSteps(numberStep);
+        printCommand();
+    }
+    
+    private void printCommand() {
+        screenPrinting.printString(1, map.getHeight() + rowShift + 1,
+            "r - solve level and show");
     }
     
     /**

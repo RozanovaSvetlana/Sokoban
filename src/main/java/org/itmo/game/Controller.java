@@ -35,7 +35,7 @@ public class Controller {
      *
      * @throws IOException
      */
-    public void play() throws IOException {
+    public void play() throws IOException, InterruptedException {
         if(startGame()) {
             Map map = gameLogic.setMap(fileName);
             gameEngine.toGameWindow(map, fileName);
@@ -98,6 +98,12 @@ public class Controller {
                                     }
                                     gameEngine.printMap(gameLogic.getNumberStep(), LEFT);
                                 }
+                                case 'r', 'к' -> {
+                                    gameEngine.closeWindow();
+                                    new Controller(gameLogic.writeMapToFile())
+                                        .printSolution();
+                                    return;
+                                }
                             }
                         }
                     }
@@ -118,11 +124,11 @@ public class Controller {
      */
     public void solve(boolean isWriteToFile, String fileNameForSolution)
         throws IOException, InterruptedException {
-        Solver solver = new Solver();
-        Map map = gameLogic.setMap(fileName);
-        List<Direction> path = solver.findSolution(map);
         if(isWriteToFile) {
             try (OutputStream fileForWrite = FileUtils.getFileForWrite(fileNameForSolution)) {
+                Solver solver = new Solver();
+                Map map = gameLogic.setMap(fileName);
+                List<Direction> path =  solver.findSolution(map);
                 if(path == null) {
                     fileForWrite.write("Solution not found!".getBytes(StandardCharsets.UTF_8));
                     System.out.println("Solution not found!");
@@ -136,15 +142,35 @@ public class Controller {
                 throw new RuntimeException(e);
             }
         } else {
-            if(startGame()) {
-                gameEngine.toGameWindow(map, fileName);
-                Thread.sleep(1000);
-                for (Direction direction : path) {
-                    takeStep(direction);
-                    gameEngine.printMap(gameLogic.getNumberStep(), direction);
-                    Thread.sleep(1000);
-                }
+            printSolutionWithStartWindow(true);
+        }
+    }
+    
+    private void printSolutionWithStartWindow(boolean isStartWindow) throws InterruptedException,
+        IOException {
+        if(isStartWindow) {
+            if (startGame()) {
+                printSolution();
             }
+        } else {
+            printSolution();
+        }
+    }
+    
+    private void printSolution() throws IOException, InterruptedException {
+        Solver solver = new Solver();
+        Map map = gameLogic.setMap(fileName);
+        List<Direction> path =  solver.findSolution(map);
+        if(path == null) {
+            System.out.println("Solution not found!");
+            return;
+        }
+        gameEngine.toGameWindow(map, fileName);
+        Thread.sleep(1000);
+        for (Direction direction : path) {
+            takeStep(direction);
+            gameEngine.printMap(gameLogic.getNumberStep(), direction);
+            Thread.sleep(1000);
         }
     }
     
