@@ -1,7 +1,10 @@
 package org.itmo.utils;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -33,6 +36,15 @@ public class FileUtils {
      */
     public InputStream getFile(String fileName) throws IOException {
         return Files.newInputStream(Path.of(fileName));
+    }
+    
+    /**
+     * Get file by name for output
+     *
+     * @return OutputStream for write to file
+     */
+    public OutputStream getFileForWrite(String fileName) throws FileNotFoundException {
+        return new FileOutputStream(fileName);
     }
     
     /**
