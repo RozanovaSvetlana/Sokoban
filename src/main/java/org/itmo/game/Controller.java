@@ -117,6 +117,7 @@ public class Controller {
                     fileForWrite.write("Solution not found!".getBytes(StandardCharsets.UTF_8));
                     System.out.println("Solution not found!");
                 } else {
+                    fileForWrite.write(("Solution for " + fileName + ": ").getBytes());
                     fileForWrite.write(path.toString().getBytes(StandardCharsets.UTF_8));
                     System.out.println("Solution is found and written to a file: "
                                        + fileNameForSolution);
@@ -127,6 +128,7 @@ public class Controller {
         } else {
             if(startGame()) {
                 gameEngine.toGameWindow(map, fileName);
+                Thread.sleep(1000);
                 for (Direction direction : path) {
                     takeStep(direction);
                     gameEngine.printMap(gameLogic.getNumberStep(), direction);
