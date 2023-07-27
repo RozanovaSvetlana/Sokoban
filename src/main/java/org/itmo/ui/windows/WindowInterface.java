@@ -5,13 +5,40 @@ import com.googlecode.lanterna.input.KeyStroke;
 import java.io.IOException;
 
 public interface WindowInterface {
-    static final int columnSize = 150;
-    static final int rowsSize = 40;
-    static final TerminalSize size = new TerminalSize(columnSize, rowsSize);
     
+    /**
+     * Launches a window
+     *
+     * @throws IOException
+     */
     void play() throws IOException;
+    
+    /**
+     * Returns the pressed button
+     *
+     * @return KeyStroke
+     * @throws IOException
+     */
     KeyStroke getKeyPressed() throws IOException;
+    
+    /**
+     * Closes the terminal
+     *
+     * @throws IOException
+     */
     void closeTerminal() throws IOException;
+    
+    /**
+     * Cleans the screen
+     *
+     * @throws IOException
+     */
     void clearScreen() throws IOException;
+    
+    /**
+     * Performs screen updates
+     *
+     * @throws IOException
+     */
     void refreshScreen() throws IOException;
 }

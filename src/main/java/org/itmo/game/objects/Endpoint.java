@@ -1,17 +1,15 @@
 package org.itmo.game.objects;
 
-import static org.itmo.game.Symbols.ENDPOINT;
+import static org.itmo.game.objects.Type.ENDPOINT;
 
-import com.googlecode.lanterna.TerminalRectangle;
-import com.googlecode.lanterna.TextCharacter;
-
-public class Endpoint extends GameObject implements GameObjectRepresentation {
-    protected Endpoint(TerminalRectangle position) {
-        super(position);
+public class Endpoint extends GameObject {
+    
+    public Endpoint(Rectangle rectangle) {
+        super(rectangle);
     }
     
     @Override
-    public TextCharacter getRepresentation() {
+    public Type getType() {
         return ENDPOINT;
     }
 }

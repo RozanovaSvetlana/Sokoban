@@ -1,18 +1,15 @@
 package org.itmo.game.objects;
 
-import static org.itmo.game.Symbols.WALL;
+import static org.itmo.game.objects.Type.WALL;
 
-import com.googlecode.lanterna.TerminalRectangle;
-import com.googlecode.lanterna.TextCharacter;
-
-public class Wall extends GameObject implements GameObjectRepresentation {
+public class Wall extends GameObject {
     
-    public Wall(TerminalRectangle position) {
-        super(position);
+    public Wall(Rectangle rectangle) {
+        super(rectangle);
     }
     
     @Override
-    public TextCharacter getRepresentation() {
+    public Type getType() {
         return WALL;
     }
 }

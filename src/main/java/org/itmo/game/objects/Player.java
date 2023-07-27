@@ -1,17 +1,15 @@
 package org.itmo.game.objects;
 
-import static org.itmo.game.Symbols.PLAYER;
+import static org.itmo.game.objects.Type.PLAYER;
 
-import com.googlecode.lanterna.TerminalRectangle;
-import com.googlecode.lanterna.TextCharacter;
-
-public class Player extends GameObject implements GameObjectRepresentation{
-    protected Player(TerminalRectangle position) {
-        super(position);
+public class Player extends GameObject {
+    
+    public Player(Rectangle rectangle) {
+        super(rectangle);
     }
     
     @Override
-    public TextCharacter getRepresentation() {
+    public Type getType() {
         return PLAYER;
     }
 }

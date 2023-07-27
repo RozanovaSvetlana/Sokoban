@@ -7,13 +7,13 @@ import org.itmo.game.Controller;
 
 public class Main {
     public static void main(String[] args) throws IOException, InterruptedException {
-        if(args.length < 2) {
+        if(args.length < 3) {
             System.out.println("Not enough arguments in the command");
         } else {
             if (args[0].equals(BASE_COMMAND)) {
                 switch (args[1]) {
                     case PLAY -> {
-                        new Controller().play();
+                        new Controller(args[2]).play();
                     }
                     case LOAD_LEVEL -> {
                     

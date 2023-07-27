@@ -1,16 +1,18 @@
 package org.itmo.game.objects;
 
-import com.googlecode.lanterna.TerminalRectangle;
-import lombok.Getter;
 import lombok.Setter;
 
-public abstract class GameObject {
-   
-    @Setter
-    @Getter
-    protected TerminalRectangle position;
+public abstract class GameObject implements GameObjectRepresentation{
     
-    protected GameObject(TerminalRectangle position) {
-        this.position = position;
+    @Setter
+    Rectangle rectangle;
+    
+    protected GameObject(Rectangle rectangle) {
+        this.rectangle = rectangle;
+    }
+    
+    @Override
+    public Rectangle getRectangle() {
+        return rectangle;
     }
 }

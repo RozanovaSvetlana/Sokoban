@@ -7,9 +7,24 @@ import java.io.IOException;
 import org.itmo.ui.PrintAndManage;
 
 public class WindowImpl implements WindowInterface {
+    
+    protected int columnSize = 150;
+    protected int rowsSize = 40;
+    static TerminalSize size;
     static PrintAndManage screenPrinting;
+    
+    public WindowImpl(int columnSize, int rowSize) {
+        this.columnSize = columnSize;
+        this.rowsSize = rowSize;
+        initial();
+    }
 
     public WindowImpl() {
+        initial();
+    }
+    
+    private void initial() {
+        size = new TerminalSize(columnSize, rowsSize);
         DefaultTerminalFactory defaultTerminalFactory = new DefaultTerminalFactory();
         try {
             screenPrinting = new PrintAndManage(defaultTerminalFactory
