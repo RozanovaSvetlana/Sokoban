@@ -37,7 +37,7 @@ public class GameEngine {
         String name = FileUtils.getFileName(fileName);
         int maxColumn = max(GameWindow.winLength, GameWindow.minColumnSize + name.length());
         currentWindow = new GameWindow(max(map.getWidth() * 2 + 2, maxColumn),
-            map.getHeight() * 2 + GameWindow.minRowSize + 1, name, map);
+            map.getHeight() * 2 + GameWindow.minRowSize + 2, name, map);
         currentWindow.clearScreen();
         currentWindow.play();
         window = (GameWindow) currentWindow;

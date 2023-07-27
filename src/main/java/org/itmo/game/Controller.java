@@ -7,9 +7,15 @@ import static org.itmo.game.logic.Direction.UP;
 
 import com.googlecode.lanterna.input.KeyStroke;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 import org.itmo.game.logic.Direction;
 import org.itmo.game.logic.Game;
+import org.itmo.game.logic.Solver;
+import org.itmo.game.map.Map;
 import org.itmo.ui.GameEngine;
+import org.itmo.utils.FileUtils;
 
 /**
  * A class that responds to the user's click in an appropriate way
@@ -29,33 +35,34 @@ public class Controller {
      *
      * @throws IOException
      */
-    public void play() throws IOException {
+    public void play() throws IOException, InterruptedException {
         if(startGame()) {
-            gameEngine.toGameWindow(gameLogic.setMap(fileName), fileName);
+            Map map = gameLogic.setMap(fileName);
+            gameEngine.toGameWindow(map, fileName);
             while (true) {
                 KeyStroke input = gameEngine.getKeyPressed();
                 if(input != null) {
                     switch (input.getKeyType()) {
                         case ArrowUp -> {
-                            if(takeStep(UP, gameEngine)) {
+                            if(takeStep(UP)) {
                                 return;
                             }
                             gameEngine.printMap(gameLogic.getNumberStep(), UP);
                         }
                         case ArrowRight -> {
-                            if(takeStep(RIGHT, gameEngine)) {
+                            if(takeStep(RIGHT)) {
                                 return;
                             }
                             gameEngine.printMap(gameLogic.getNumberStep(), RIGHT);
                         }
                         case ArrowDown -> {
-                            if(takeStep(DOWN, gameEngine)) {
+                            if(takeStep(DOWN)) {
                                 return;
                             }
                             gameEngine.printMap(gameLogic.getNumberStep(), DOWN);
                         }
                         case ArrowLeft -> {
-                            if(takeStep(LEFT, gameEngine)) {
+                            if(takeStep(LEFT)) {
                                 return;
                             }
                             gameEngine.printMap(gameLogic.getNumberStep(), LEFT);
@@ -68,34 +75,102 @@ public class Controller {
                             Character key = input.getCharacter();
                             switch (key) {
                                 case 'w', 'ц' -> {
-                                    if(takeStep(UP, gameEngine)) {
+                                    if(takeStep(UP)) {
                                         return;
                                     }
                                     gameEngine.printMap(gameLogic.getNumberStep(), UP);
                                 }
                                 case 'd', 'в' -> {
-                                    if(takeStep(RIGHT, gameEngine)) {
+                                    if(takeStep(RIGHT)) {
                                         return;
                                     }
                                     gameEngine.printMap(gameLogic.getNumberStep(), RIGHT);
                                 }
                                 case 's', 'ы' -> {
-                                    if(takeStep(DOWN, gameEngine)) {
+                                    if(takeStep(DOWN)) {
                                         return;
                                     }
                                     gameEngine.printMap(gameLogic.getNumberStep(), DOWN);
                                 }
                                 case 'a', 'ф' -> {
-                                    if(takeStep(LEFT, gameEngine)) {
+                                    if(takeStep(LEFT)) {
                                         return;
                                     }
                                     gameEngine.printMap(gameLogic.getNumberStep(), LEFT);
+                                }
+                                case 'r', 'к' -> {
+                                    gameEngine.closeWindow();
+                                    new Controller(gameLogic.writeMapToFile())
+                                        .printSolution();
+                                    return;
                                 }
                             }
                         }
                     }
                 }
             }
+        }
+    }
+    
+    /**
+     * Seeks a solution for the transferred card
+     *
+     * @param isWriteToFile - if true - the solution will be written to the file,
+     *                     otherwise - step-by-step display of the solution will be performed
+     * @param fileNameForSolution - filename of the file to record the response
+     *                            (if no recording is required, the argument is ignored)
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    public void solve(boolean isWriteToFile, String fileNameForSolution)
+        throws IOException, InterruptedException {
+        if(isWriteToFile) {
+            try (OutputStream fileForWrite = FileUtils.getFileForWrite(fileNameForSolution)) {
+                Solver solver = new Solver();
+                Map map = gameLogic.setMap(fileName);
+                List<Direction> path =  solver.findSolution(map);
+                if(path == null) {
+                    fileForWrite.write("Solution not found!".getBytes(StandardCharsets.UTF_8));
+                    System.out.println("Solution not found!");
+                } else {
+                    fileForWrite.write(("Solution for " + fileName + ": ").getBytes());
+                    fileForWrite.write(path.toString().getBytes(StandardCharsets.UTF_8));
+                    System.out.println("Solution is found and written to a file: "
+                                       + fileNameForSolution);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            printSolutionWithStartWindow(true);
+        }
+    }
+    
+    private void printSolutionWithStartWindow(boolean isStartWindow) throws InterruptedException,
+        IOException {
+        if(isStartWindow) {
+            if (startGame()) {
+                printSolution();
+            }
+        } else {
+            printSolution();
+        }
+    }
+    
+    private void printSolution() throws IOException, InterruptedException {
+        Solver solver = new Solver();
+        Map map = gameLogic.setMap(fileName);
+        List<Direction> path =  solver.findSolution(map);
+        if(path == null) {
+            System.out.println("Solution not found!");
+            return;
+        }
+        gameEngine.toGameWindow(map, fileName);
+        Thread.sleep(1000);
+        for (Direction direction : path) {
+            takeStep(direction);
+            gameEngine.printMap(gameLogic.getNumberStep(), direction);
+            Thread.sleep(1000);
         }
     }
     
@@ -129,7 +204,7 @@ public class Controller {
      * @return true - if the game ended after the step, false - otherwise
      * @throws IOException
      */
-    private boolean takeStep(Direction direction, GameEngine gameEngine) throws IOException {
+    private boolean takeStep(Direction direction) throws IOException {
         if(gameLogic.takeStep(direction)) {
             gameEngine.setWin(gameLogic.getNumberStep(), direction);
             while (true) {
